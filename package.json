@@ -1,0 +1,22 @@
+{
+  "name": "multi-agent-todo-lab",
+  "version": "1.0.0",
+  "description": "Root runner for the multi-agent TODO lab (backend + frontend)",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "setup": "npm install",
+    "dev": "concurrently -n backend,frontend -c blue,magenta \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "start": "concurrently -n backend,frontend -c blue,magenta \"npm run start -w backend\" \"npm run dev -w frontend\"",
+    "dev:backend": "npm run dev -w backend",
+    "dev:frontend": "npm run dev -w frontend",
+    "test": "npm test -w backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
