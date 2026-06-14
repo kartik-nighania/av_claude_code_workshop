@@ -4,3 +4,5 @@ dist/
 *.log
 .env
 .vite/
+**/.claude/agent-local-memory/
+notes.txt

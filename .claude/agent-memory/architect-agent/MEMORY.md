@@ -1,0 +1,1 @@
+- [Frontend Auth Design](frontend_auth_design.md) — OAuth2/OIDC frontend blueprint appended to docs/architecture.md

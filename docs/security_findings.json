@@ -1,0 +1,134 @@
+[
+  {
+    "severity": "critical",
+    "category": "Broken Authentication / Broken Access Control",
+    "file": "backend/src/app.js",
+    "line": 11,
+    "description": "CORS is enabled globally with no origin restriction using bare cors(). This allows any website to make cross-origin requests to the API on behalf of users' browsers, enabling CSRF attacks, data theft, and unauthorized modifications. Combined with the lack of authentication (see next finding), this is a direct path to account compromise.",
+    "recommendation": "Configure CORS to restrict to specific trusted origins: app.use(cors({ origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173'] })). In production, only whitelist the frontend domain(s)."
+  },
+  {
+    "severity": "critical",
+    "category": "Broken Authentication",
+    "file": "backend/src/services/todoService.js",
+    "line": 35,
+    "description": "No authentication or authorization exists. Any HTTP client can read, create, update, and delete all todos without providing credentials. There is no user concept in the data model. An attacker can fully enumerate, modify, and destroy all application data.",
+    "recommendation": "Implement authentication (JWT, OAuth2, or sessions) to identify users. Add userId to the data model and service layer. Enforce authorization checks so users can only read/modify/delete their own todos. Add middleware to attach the authenticated user to each request."
+  },
+  {
+    "severity": "high",
+    "category": "Sensitive Data Exposure",
+    "file": "backend/src/app.js",
+    "line": 24,
+    "description": "Error handler logs all 500-level errors directly to console (line 26: console.error(err)). In production, this exposes full stack traces and implementation details (file paths, function names, internal error states) that aid attackers in reconnaissance and exploit development. Error messages are also returned verbatim to clients (line 27), further leaking system behavior.",
+    "recommendation": "Generate a unique error ID server-side and log full details securely. Return only the error ID and generic message to clients: res.status(status).json({ error: 'An error occurred', errorId: uuid() }). Log full stack and details to a separate, access-controlled log service."
+  },
+  {
+    "severity": "high",
+    "category": "Denial of Service",
+    "file": "backend/src/app.js",
+    "line": 12,
+    "description": "Express JSON parser is configured without payload size limits (app.use(express.json())). An attacker can send arbitrarily large JSON payloads to exhaust server memory and CPU, causing denial of service. The title length validation (280 chars) occurs after parsing, not before, so it provides no protection.",
+    "recommendation": "Set explicit payload limits: app.use(express.json({ limit: '10kb' })). Adjust based on legitimate payload sizes. This prevents memory exhaustion and slow-loris attacks."
+  },
+  {
+    "severity": "high",
+    "category": "Missing Security Headers",
+    "file": "backend/src/app.js",
+    "line": 8,
+    "description": "No security-related HTTP headers are set. Missing X-Content-Type-Options, X-Frame-Options, Strict-Transport-Security, etc. This leaves the application vulnerable to MIME-sniffing, clickjacking, and HSTS bypass attacks, especially if the API is accessed directly by browsers.",
+    "recommendation": "Add helmet middleware: npm install helmet && app.use(helmet()). This sets secure defaults for X-Content-Type-Options: nosniff, X-Frame-Options: DENY, Strict-Transport-Security, and others. Or manually set critical headers if helmet is not acceptable."
+  },
+  {
+    "severity": "medium",
+    "category": "Information Disclosure",
+    "file": "backend/src/app.js",
+    "line": 27,
+    "description": "Error responses expose error.message directly to clients. While current validation errors are benign ('title is required'), this leaks system implementation details and can aid attackers in crafting targeted attacks or probing the system.",
+    "recommendation": "Map all errors to generic messages visible to clients. Use a server-side unique error ID for debugging: { error: 'An error occurred', errorId: '550e8400-...' }. Log full error details securely on the server."
+  },
+  {
+    "severity": "medium",
+    "category": "Broken Input Validation",
+    "file": "backend/src/controllers/todoController.js",
+    "line": 6,
+    "description": "The parseId function coerces string IDs using Number(raw), which can behave unexpectedly with edge cases (e.g., '1e2' parses to 100, Infinity coerces to a non-integer). While the subsequent Number.isInteger check catches most issues, strict parsing would be more robust. Additionally, there is no defense against integer overflow in IDs.",
+    "recommendation": "Use strict integer parsing: const id = parseInt(raw, 10); if (isNaN(id) || id < 1 || id > Number.MAX_SAFE_INTEGER) { throw new ValidationError('invalid id') }."
+  },
+  {
+    "severity": "medium",
+    "category": "Information Disclosure / Enumeration",
+    "file": "backend/src/controllers/todoController.js",
+    "line": 20,
+    "description": "ID validation accepts sequential positive integers with no rate limiting. Combined with the lack of authentication, an attacker can enumerate all todos by requesting IDs 1, 2, 3, ... without restriction, completely exposing the dataset.",
+    "recommendation": "Implement rate limiting on all endpoints (e.g., using express-rate-limit). Add ownership checks so that even guessed IDs only return data if the user owns them. Consider UUIDs instead of sequential IDs to reduce enumeration risk."
+  },
+  {
+    "severity": "medium",
+    "category": "Insufficient Input Validation",
+    "file": "backend/src/services/todoService.js",
+    "line": 50,
+    "description": "The updateTodo function uses Object.assign(todo, patch) to merge updates. While currently safe due to whitelist checks above, this pattern is fragile: if new fields are added to the data model (e.g., userId, priority), they could accidentally become user-modifiable without authorization checks.",
+    "recommendation": "Explicitly whitelist fields that can be updated: const allowed = {}; if (patch.title !== undefined) allowed.title = patch.title; if (patch.completed !== undefined) allowed.completed = patch.completed; return store.update(id, allowed). Use schema validation (Zod, Joi) to enforce this."
+  },
+  {
+    "severity": "medium",
+    "category": "Sensitive Data Exposure",
+    "file": "backend/src/store/todoStore.js",
+    "line": 27,
+    "description": "The createdAt timestamp is the only audit field. There is no updatedAt, no change history, and no user attribution. This makes it impossible to detect if todos have been modified after creation or by whom. Additionally, the in-memory store stores all data in plaintext without encryption.",
+    "recommendation": "Add updatedAt field, updated on every modification. For production (database migration), implement audit logging or change history. Document that the in-memory store is unsuitable for sensitive data and should only be used for development/testing."
+  },
+  {
+    "severity": "low",
+    "category": "Insecure Configuration",
+    "file": "backend/src/server.js",
+    "line": 5,
+    "description": "No HTTPS enforcement. The app listens on HTTP (default :3001). In production, unencrypted traffic allows network-level attackers to intercept API calls, steal session tokens, and perform man-in-the-middle attacks.",
+    "recommendation": "In production, enforce HTTPS at the reverse proxy layer (nginx, load balancer). Set Strict-Transport-Security headers (via helmet or manually). For local development, HTTP is acceptable; document the production HTTPS requirement clearly."
+  },
+  {
+    "severity": "low",
+    "category": "Insufficient Logging",
+    "file": "backend/src/app.js",
+    "line": 8,
+    "description": "No audit logging for API operations. There is no record of which client created, updated, or deleted todos, when, or what changed. This violates compliance requirements (GDPR, SOC2, etc.) and makes forensic investigation impossible.",
+    "recommendation": "Add middleware to log all mutations: timestamp, client IP, endpoint, method, request/response status, user ID (once auth is added), and data changes. Store logs in a tamper-evident system separate from the application database."
+  },
+  {
+    "id": "FE-001",
+    "severity": "high",
+    "category": "A01:2021 Broken Access Control / CSRF",
+    "file": "frontend/src/api.js",
+    "line": 16,
+    "description": "All state-changing requests (POST /api/todos, PATCH /toggle, DELETE) are sent with no anti-CSRF token, no custom non-simple header acting as a CSRF guard, and no SameSite protection enforced from the client side. The POST uses Content-Type: application/json which a cross-site HTML form cannot forge, but cross-site fetch/XHR can still issue these requests. Because the backend enables CORS with no origin restriction (see backend/src/app.js:11) and has no authentication, any third-party site a victim visits can silently create, toggle, or delete that user's todos from the victim's browser. The frontend offers no client-side mitigation (e.g., a CSRF token echoed in a header).",
+    "remediation": "Once the backend adds sessions/cookies, have the client read a CSRF token (e.g., from a meta tag or a /csrf endpoint) and send it in a custom header such as X-CSRF-Token on every mutating request. Prefer the double-submit cookie or synchronizer-token pattern. Coordinate with backend to require this header and to set SameSite=Strict/Lax on any auth cookie. If auth uses a bearer token in an Authorization header rather than cookies, document that cookies must not be used for auth to keep requests CSRF-immune."
+  },
+  {
+    "id": "FE-002",
+    "severity": "low",
+    "category": "A07:2021 Identification and Authentication Failures",
+    "file": "frontend/src/api.js",
+    "line": 14,
+    "description": "There is currently no authentication on the client. This is consistent with the backend (no auth exists). The risk is forward-looking: when auth is added, the natural temptation in a Vite/React SPA is to persist the access token in localStorage/sessionStorage, which is readable by any JavaScript and therefore exfiltratable by any XSS or malicious dependency. No guardrail or comment in the API client steers future implementers away from that pattern.",
+    "remediation": "When auth is introduced, store tokens in HttpOnly, Secure, SameSite cookies set by the backend rather than in localStorage/sessionStorage or in-memory JS that is logged. If a bearer token must live in JS, keep it in memory only (never Web Storage) and never log it. Add the Authorization header in the api.js fetch wrapper, not scattered across components."
+  },
+  {
+    "id": "FE-003",
+    "severity": "low",
+    "category": "A05:2021 Security Misconfiguration",
+    "file": "frontend/index.html",
+    "line": 7,
+    "description": "The HTML document defines no Content-Security-Policy (no CSP meta tag and no documented response-header CSP). A CSP is the primary defense-in-depth control that limits the impact of any XSS that slips in (e.g., via a future dangerouslySetInnerHTML, a compromised dependency, or injected markup). Without it, an injected script runs with full privileges and can call the open API or exfiltrate data to any origin.",
+    "remediation": "Serve a strict Content-Security-Policy via response headers in production (preferred over a meta tag), e.g. default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'. Vite's build output is static, so set the header at the hosting/reverse-proxy layer. Also add X-Content-Type-Options: nosniff and X-Frame-Options/frame-ancestors to prevent clickjacking."
+  },
+  {
+    "id": "FE-004",
+    "severity": "low",
+    "category": "A03:2021 Injection / Insufficient Input Validation",
+    "file": "frontend/src/components/AddTodo.jsx",
+    "line": 8,
+    "description": "Client-side validation of the todo title is limited to trimming whitespace and rejecting an empty string; there is no maximum-length check before the value is sent to the backend (api.create in api.js:16). The backend enforces a 280-char limit only after parsing the request body, so the client provides no early defense and will happily attempt to submit arbitrarily large titles. This is a minor client-side gap (the authoritative validation must remain server-side), but the absence of a length bound means the UI can drive oversized payloads at the backend. Note: there is no injection/XSS sink here — titles are rendered via React's auto-escaping JSX ({todo.title}), not dangerouslySetInnerHTML, so reflected/stored XSS is not present.",
+    "remediation": "Add a maxLength attribute on the input and a guard in submit() that rejects titles over the agreed limit (e.g., 280 chars) before calling onAdd, surfacing a user-facing message. Treat this strictly as UX/defense-in-depth; the server must remain the authoritative validator."
+  }
+]

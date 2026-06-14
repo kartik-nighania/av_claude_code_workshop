@@ -1,0 +1,5 @@
+- [Backend Baseline Security](backend_baseline.md) — Initial security posture and key findings from 2026-06-13
+- [Security Assessment 2026-06-13](assessment_2026-06-13.md) — 11 findings (2 critical, 4 high, 5 medium) with fix patterns for future features
+- [Frontend Security Posture](frontend_posture.md) — React+Vite review 2026-06-13: XSS-clean, 4 findings (1 high CSRF, 3 low)
+- [Findings File Is Shared](feedback_findings_file.md) — docs/security_findings.json holds all scopes; append don't overwrite
+- [Auth Design Review](auth_design_review.md) — 2026-06-13 review of JWT+OIDC design docs (not yet implemented): token storage, OIDC, CSRF, IDOR

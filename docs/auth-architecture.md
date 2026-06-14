@@ -50,14 +50,14 @@ frontend/src/
 
 **User**
 
-| Field          | Type    | Constraints                         |
-| -------------- | ------- | ----------------------------------- |
-| `id`           | string  | UUID, primary key                   |
-| `email`        | string  | required, unique, lowercased        |
-| `name`         | string  | optional, from OIDC                 |
-| `oidcId`       | string  | required, unique (OIDC `sub` claim) |
-| `oidcProvider` | string  | required (e.g. `"google"`)          |
-| `createdAt`    | string  | ISO-8601                            |
+| Field          | Type   | Constraints                         |
+| -------------- | ------ | ----------------------------------- |
+| `id`           | string | UUID, primary key                   |
+| `email`        | string | required, unique, lowercased        |
+| `name`         | string | optional, from OIDC                 |
+| `oidcId`       | string | required, unique (OIDC `sub` claim) |
+| `oidcProvider` | string | required (e.g. `"google"`)          |
+| `createdAt`    | string | ISO-8601                            |
 
 **Todo (updated)** — adds `userId` (FK → User.id, required); `id` is auto-increment **within a user's scope**.
 
@@ -70,13 +70,13 @@ frontend/src/
 
 Base: `/api/auth`
 
-| Method | Path             | Request                  | Success            | Errors        |
-| ------ | ---------------- | ------------------------ | ------------------ | ------------- |
-| POST   | `/login-url`     | —                        | 200 `{loginUrl, state}` | 500       |
-| GET    | `/callback`      | `?code&state`            | 302 → frontend (token) | 400, 500  |
-| POST   | `/refresh`       | `{refreshToken}` / cookie| 200 `{accessToken}`| 400, 401      |
-| GET    | `/me`            | Bearer token             | 200 `User`         | 401           |
-| POST   | `/logout`        | `{refreshToken}` / cookie| 204                | 204 (idempotent) |
+| Method | Path         | Request                   | Success                 | Errors           |
+| ------ | ------------ | ------------------------- | ----------------------- | ---------------- |
+| POST   | `/login-url` | —                         | 200 `{loginUrl, state}` | 500              |
+| GET    | `/callback`  | `?code&state`             | 302 → frontend (token)  | 400, 500         |
+| POST   | `/refresh`   | `{refreshToken}` / cookie | 200 `{accessToken}`     | 400, 401         |
+| GET    | `/me`        | Bearer token              | 200 `User`              | 401              |
+| POST   | `/logout`    | `{refreshToken}` / cookie | 204                     | 204 (idempotent) |
 
 **Existing `/api/todos/*`** — unchanged signatures, but all now require `Authorization: Bearer <token>`, operate only on `req.user.id`'s data, and return **403** if a user targets another user's todo, **401** if unauthenticated.
 
@@ -137,15 +137,15 @@ Provider setup: register an OAuth2 web client (Google Cloud Console / Auth0 / Az
 
 ## Error Boundaries
 
-| Failure                                  | Layer          | Status | Surfaced as                          |
-| ---------------------------------------- | -------------- | ------ | ------------------------------------ |
-| Missing/invalid OIDC `code`              | authController | 400    | `invalid_grant`                      |
-| `state` mismatch (CSRF)                  | authController | 400    | `invalid_state` (+ security log)     |
-| OIDC provider unreachable                | ssoService     | 500    | `SSO provider unavailable`           |
-| Access token missing/expired/malformed   | authMiddleware | 401    | `Unauthorized`                       |
-| Refresh token expired/revoked            | authService    | 401    | `Refresh token invalid` → re-login   |
-| User targets another user's todo         | todoService    | 403    | `Not authorized to access this todo` |
-| `JWT_SECRET` missing                      | authService    | 500    | `Server error` (operator fixes cfg)  |
+| Failure                                | Layer          | Status | Surfaced as                          |
+| -------------------------------------- | -------------- | ------ | ------------------------------------ |
+| Missing/invalid OIDC `code`            | authController | 400    | `invalid_grant`                      |
+| `state` mismatch (CSRF)                | authController | 400    | `invalid_state` (+ security log)     |
+| OIDC provider unreachable              | ssoService     | 500    | `SSO provider unavailable`           |
+| Access token missing/expired/malformed | authMiddleware | 401    | `Unauthorized`                       |
+| Refresh token expired/revoked          | authService    | 401    | `Refresh token invalid` → re-login   |
+| User targets another user's todo       | todoService    | 403    | `Not authorized to access this todo` |
+| `JWT_SECRET` missing                   | authService    | 500    | `Server error` (operator fixes cfg)  |
 
 New typed errors (carry `.status`, mapped by `app.js` middleware like the existing ones): `UnauthorizedError` (401), `ForbiddenError` (403), `SsoError` (500).
 
@@ -154,7 +154,7 @@ New typed errors (carry `.status`, mapped by `app.js` middleware like the existi
 - **Token storage:** access token in `localStorage` (short-lived), refresh token in **httpOnly cookie** (`SameSite=Strict`) — balances XSS/CSRF exposure vs. usability.
 - **Refresh revocation:** server-side `sessionStore` so logout is a real guarantee and a user's tokens can be mass-revoked.
 - **CSRF on callback:** stateless — frontend-generated `state` in `sessionStorage`, validated on return.
-- **Middleware order:** global `authMiddleware` is *permissive* (populates `req.user` if a valid token exists, never rejects), so `/api/auth/*` stays reachable; protected routes add `requireAuth` which rejects with 401 when `req.user` is absent.
+- **Middleware order:** global `authMiddleware` is _permissive_ (populates `req.user` if a valid token exists, never rejects), so `/api/auth/*` stays reachable; protected routes add `requireAuth` which rejects with 401 when `req.user` is absent.
 - **Store change:** `todoStore` moves from a flat array to a per-user partition (`Map<userId, Todo[]>` + per-user id counter); the service/controller signatures gain a leading `userId`.
 
 ## Open Questions
