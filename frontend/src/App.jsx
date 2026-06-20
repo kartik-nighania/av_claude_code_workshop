@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "./api.js";
 import DaySelector from "./components/DaySelector.jsx";
 import HabitList from "./components/HabitList.jsx";
+import LoginForm from "./components/LoginForm.jsx";
 
 // Local YYYY-MM-DD for "today" (avoids UTC drift from toISOString).
 function todayISO() {
@@ -67,6 +68,8 @@ export default function App() {
         <h1>Health Tracker</h1>
         <p className="subtitle">Daily habits — one day at a time</p>
       </header>
+
+      <LoginForm />
 
       <DaySelector date={date} onChange={setDate} />
 
