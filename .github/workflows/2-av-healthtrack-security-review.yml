@@ -1,19 +1,6 @@
 name: 2 Security Review
 on:
-  pull_request:
-    branches: [main]
-    paths: ["backend/**", "frontend/**"]
-  workflow_dispatch:
-    inputs:
-      deploy_to:
-        description: "Deploy to"
-        required: true
-        default: "production"
-        type: choice
-        options:
-          - production
-          - staging
-          - development
+  workflow_dispatch: # manual trigger
 
 # Least-privilege token. The action authenticates to GitHub via the Claude
 # GitHub App token; these scopes cover checkout and any PR annotations.
