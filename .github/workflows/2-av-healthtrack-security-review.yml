@@ -1,4 +1,4 @@
-name: HealthTrack AI Review Pipeline
+name: 2 Security Review
 on:
   pull_request:
     branches: [main]

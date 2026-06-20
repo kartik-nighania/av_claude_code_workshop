@@ -1,4 +1,4 @@
-name: HealthTrack AI Review Pipeline
+name: 1 Hello World
 on:
   pull_request:
     branches: [main]
