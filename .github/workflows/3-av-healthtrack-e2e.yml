@@ -1,0 +1,112 @@
+name: 3 HealthTrack E2E
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ["backend/**", "frontend/**"]
+  workflow_dispatch:
+
+# Least-privilege token. `contents: read` covers checkout; the extra scopes are
+# for the Claude security-review action's PR annotations.
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+# Single job, sequential steps. A step that exits non-zero stops the ones after
+# it (GitHub's default), so the pipeline is fail-fast and the job is green only
+# if every stage — lint, tests, and the security gate — passes.
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ---------- Stage 1: Lint (backend + frontend) ----------
+      - name: Lint backend
+        run: npm run lint -w backend
+
+      - name: Lint frontend
+        run: npm run lint -w frontend
+
+      # ---------- Stage 2: Tests (run only if lint passed) ----------
+      # Cheap, fast checks run before the paid security review so they fail first.
+      - name: Test backend
+        run: npm test -w backend
+
+      - name: Test frontend
+        run: npm test -w frontend
+
+      # ---------- Stage 3: Security review (runs only if tests passed) ----------
+      # `--json-schema` forces Claude's final answer into a structured object,
+      # surfaced as the step output `structured_output`. The action itself only
+      # fails on execution errors, never on findings, so the gate step below makes
+      # the pass/fail decision.
+      - name: AI Security Review
+        id: review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --max-turns 100
+            --model claude-haiku-4-5
+            --allowed-tools "Read,Grep,Glob"
+            --json-schema '{"type":"object","properties":{"verdict":{"type":"string","enum":["pass","fail"]},"summary":{"type":"string"},"findings":{"type":"array","items":{"type":"object","properties":{"severity":{"type":"string","enum":["critical","high","medium","low"]},"category":{"type":"string"},"file":{"type":"string"},"line":{"type":"integer"},"issue":{"type":"string"},"recommendation":{"type":"string"}},"required":["severity","category","file","issue","recommendation"]}}},"required":["verdict","summary","findings"]}'
+          prompt: |
+            You are a security engineer. Review the code under `backend/` and
+            `frontend/` and the design in `docs/architecture.md`.
+            FOCUS ONLY ON:
+            - OWASP Top 10
+            - Injection (SQL, NoSQL, command, template)
+            - Broken authentication / authorization
+            - Sensitive data exposure (secrets, PII, tokens in logs/responses)
+
+            Do NOT report style, performance, or non-security issues.
+            For every issue set: severity (critical/high/medium/low), a short
+            category, the file and line, a concise description, and a concrete fix.
+            Set `verdict` to "fail" if there is any critical- or high-severity
+            finding, otherwise "pass". Return your final answer as JSON matching
+            the schema.
+
+      - name: Enforce security gate
+        env:
+          REVIEW: ${{ steps.review.outputs.structured_output }}
+        run: |
+          if [ -z "$REVIEW" ]; then
+            echo "::error::Security review produced no structured output (the review step likely failed)."
+            exit 1
+          fi
+
+          CRIT=$(printf '%s' "$REVIEW" | jq '[.findings[] | select(.severity=="critical")] | length')
+          HIGH=$(printf '%s' "$REVIEW" | jq '[.findings[] | select(.severity=="high")] | length')
+
+          # Human-readable report in the workflow run summary.
+          {
+            echo "## 🔒 Security Review"
+            echo ""
+            printf '%s' "$REVIEW" | jq -r '.summary'
+            echo ""
+            echo "| Severity | Category | Location | Issue |"
+            echo "| --- | --- | --- | --- |"
+            printf '%s' "$REVIEW" | jq -r '
+              .findings[]
+              | "| \(.severity) | \(.category) | \(.file)\(if .line then ":" + (.line|tostring) else "" end) | \(.issue) |"'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "Critical: $CRIT | High: $HIGH"
+          # Fail the build on any critical OR high finding.
+          if [ "$CRIT" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
+            echo "::error::Security gate failed — $CRIT critical and $HIGH high finding(s). See the run summary."
+            exit 1
+          fi
+          echo "✅ Security gate passed — no critical or high findings."
