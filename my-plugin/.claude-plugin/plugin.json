@@ -1,0 +1,8 @@
+{
+  "name": "my-plugin",
+  "description": "Demo plugin for testing",
+  "version": "1.0.0",
+  "author": {
+    "name": "Kartik"
+  }
+}

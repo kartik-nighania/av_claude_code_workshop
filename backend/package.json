@@ -1,5 +1,5 @@
 {
-  "name": "todo-backend",
+  "name": "health-tracker-backend",
   "version": "1.0.0",
   "description": "End-to-end TODO app backend — Express REST API (base structure for the multi-agent hands-on lab)",
   "type": "module",

@@ -1,0 +1,3 @@
+# Prettier inserts a blank line after every heading and offers no way to disable
+# that rule. Ignore markdown so headings can sit directly above their first line.
+*.md

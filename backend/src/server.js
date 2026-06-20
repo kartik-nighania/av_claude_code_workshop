@@ -6,5 +6,5 @@ const PORT = process.env.PORT || 3001;
 const app = createApp();
 
 app.listen(PORT, () => {
-  console.log(`TODO API listening on http://localhost:${PORT}`);
+  console.log(`Health Tracker API listening on http://localhost:${PORT}`);
 });
