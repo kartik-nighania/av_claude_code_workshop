@@ -1,0 +1,15 @@
+{
+  // Markdown-only override: keep format-on-save for other languages, but do NOT
+  // let any formatter (e.g. Prettier) reformat .md files on save.
+  //
+  // Why: Prettier unconditionally inserts a blank line after a heading
+  // ("blanks-around-headings", same as markdownlint MD022) and has NO option to
+  // disable it. To preserve a heading immediately followed by its text with no
+  // blank line, the only reliable fix is to stop the markdown formatter from
+  // running on save.
+  "[markdown]": {
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false
+  }
+}

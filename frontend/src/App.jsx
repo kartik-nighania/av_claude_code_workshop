@@ -1,65 +1,74 @@
 import { useEffect, useState } from "react";
 import { api } from "./api.js";
-import AddTodo from "./components/AddTodo.jsx";
-import TodoList from "./components/TodoList.jsx";
+import DaySelector from "./components/DaySelector.jsx";
+import HabitList from "./components/HabitList.jsx";
+
+// Local YYYY-MM-DD for "today" (avoids UTC drift from toISOString).
+function todayISO() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset() * 60000;
+  return new Date(now.getTime() - offset).toISOString().slice(0, 10);
+}
 
 export default function App() {
-  const [todos, setTodos] = useState([]);
+  const [habits, setHabits] = useState([]);
+  const [date, setDate] = useState(todayISO);
+  const [state, setState] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  async function refresh() {
+  // Load the fixed habit definitions once.
+  useEffect(() => {
+    api
+      .habits()
+      .then(setHabits)
+      .catch((e) => setError(e.message));
+  }, []);
+
+  // Load the selected day's habit state whenever the date changes.
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    api
+      .getDay(date)
+      .then((day) => {
+        if (!active) return;
+        setState(day.habits);
+        setError(null);
+      })
+      .catch((e) => active && setError(e.message))
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
+  }, [date]);
+
+  async function handleToggle(key, value) {
+    // Optimistic update, reconciled with the server response.
+    setState((prev) => ({ ...prev, [key]: value }));
     try {
-      setTodos(await api.list());
+      const day = await api.updateDay(date, { [key]: value });
+      setState(day.habits);
       setError(null);
     } catch (e) {
       setError(e.message);
-    } finally {
-      setLoading(false);
+      // Roll back on failure.
+      setState((prev) => ({ ...prev, [key]: !value }));
     }
   }
 
-  useEffect(() => {
-    refresh();
-  }, []);
-
-  async function handleAdd(title) {
-    try {
-      await api.create(title);
-      await refresh();
-    } catch (e) {
-      setError(e.message);
-    }
-  }
-
-  async function handleToggle(id) {
-    try {
-      await api.toggle(id);
-      await refresh();
-    } catch (e) {
-      setError(e.message);
-    }
-  }
-
-  async function handleRemove(id) {
-    try {
-      await api.remove(id);
-      await refresh();
-    } catch (e) {
-      setError(e.message);
-    }
-  }
-
-  const remaining = todos.filter((t) => !t.completed).length;
+  const done = Object.values(state).filter(Boolean).length;
+  const total = habits.length;
+  const allDone = total > 0 && done === total;
 
   return (
     <main className="app">
       <header>
-        <h1>TODO</h1>
-        <p className="subtitle">Multi-agent lab — base structure</p>
+        <h1>Health Tracker</h1>
+        <p className="subtitle">Daily habits — one day at a time</p>
       </header>
 
-      <AddTodo onAdd={handleAdd} />
+      <DaySelector date={date} onChange={setDate} />
 
       {error && <p className="error">{error}</p>}
 
@@ -67,9 +76,9 @@ export default function App() {
         <p className="muted">Loading…</p>
       ) : (
         <>
-          <TodoList todos={todos} onToggle={handleToggle} onRemove={handleRemove} />
+          <HabitList habits={habits} state={state} onToggle={handleToggle} />
           <footer className="count">
-            {remaining} of {todos.length} remaining
+            {allDone ? "All habits done — nice! 🎉" : `${done} of ${total} habits done`}
           </footer>
         </>
       )}

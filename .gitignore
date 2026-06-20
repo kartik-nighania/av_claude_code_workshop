@@ -5,6 +5,6 @@ dist/
 .env
 .vite/
 **/.claude/agent-local-memory/
-notes.txt
-notes.md
+notes**.txt
+notes**.md
 docs/screenshots/*.png

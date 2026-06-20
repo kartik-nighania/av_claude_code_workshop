@@ -1,5 +1,5 @@
 {
-  "name": "todo-frontend",
+  "name": "health-tracker-frontend",
   "version": "1.0.0",
   "description": "End-to-end TODO app frontend — React + Vite (base structure for the multi-agent hands-on lab)",
   "type": "module",

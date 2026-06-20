@@ -1,0 +1,27 @@
+name: HealthTrack AI Review Pipeline
+on:
+  pull_request:
+    branches: [main]
+    paths: ["backend/**", "frontend/**"]
+  workflow_dispatch:
+    inputs:
+      deploy_to:
+        description: "Deploy to"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production
+          - staging
+          - development
+
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Hello World
+        run: |
+          echo "Hello World"
+          echo "Deploy to: ${{ inputs.deploy_to }}"

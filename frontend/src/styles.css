@@ -41,13 +41,20 @@ header h1 {
   font-size: 14px;
 }
 
-.add-todo {
+.day-selector {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-.add-todo input {
+.day-selector label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.day-selector input {
   flex: 1;
   padding: 12px 14px;
   border: 1px solid var(--border);
@@ -55,37 +62,25 @@ header h1 {
   font-size: 15px;
 }
 
-.add-todo input:focus {
+.day-selector input:focus {
   outline: none;
   border-color: var(--accent);
 }
 
-.add-todo button {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.todo-list {
+.habit-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.todo-item {
+.habit-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 12px 4px;
   border-bottom: 1px solid var(--border);
 }
 
-.todo-item label {
+.habit-item label {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -93,21 +88,15 @@ header h1 {
   font-size: 16px;
 }
 
-.todo-item.done span {
-  text-decoration: line-through;
-  color: var(--muted);
-}
-
-.remove {
-  border: none;
-  background: transparent;
-  color: var(--muted);
-  font-size: 16px;
+.habit-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
   cursor: pointer;
 }
 
-.remove:hover {
-  color: var(--danger);
+.habit-item.done span {
+  color: var(--muted);
 }
 
 .count {
