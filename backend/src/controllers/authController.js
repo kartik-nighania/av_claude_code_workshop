@@ -1,7 +1,4 @@
-// ⚠️ INTENTIONALLY VULNERABLE DEMO AUTH — do not ship. See authService.js.
-//
-// HTTP layer for /api/auth. Translates requests into auth-service calls and
-// holds the (deliberately broken) request-authentication middleware.
+
 
 import * as auth from "../services/authService.js";
 
