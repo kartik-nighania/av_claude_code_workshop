@@ -1,0 +1,15 @@
+# Dependencies & build output (rebuilt inside the image)
+node_modules/
+dist/
+
+# Environment & secrets
+.env
+.env.*
+
+# Git / IDE / OS
+.git/
+.gitignore
+.vscode/
+.idea/
+*.swp
+.DS_Store
