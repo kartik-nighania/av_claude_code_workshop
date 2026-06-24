@@ -25,4 +25,18 @@ export const api = {
     }).then(handle),
   // Full tracked-day history.
   history: () => fetch(`${BASE}/days`).then(handle),
+
+  // ⚠️ INTENTIONALLY VULNERABLE DEMO AUTH — see backend/src/services/authService.js.
+  register: (username, password) =>
+    fetch(`${BASE}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    }).then(handle),
+  login: (username, password) =>
+    fetch(`${BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    }).then(handle),
 };
