@@ -1,4 +1,4 @@
-# Multi-Agent TODO Lab
+# Multi-Agent TODO Lab 
 
 A complete, runnable **end-to-end TODO app** (React + Vite frontend, Express
 backend) plus a set of **specialist agent prompts** — the base structure for a
