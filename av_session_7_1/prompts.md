@@ -10,3 +10,20 @@ Also check if there are any other connection-handling bugs in this file.
 
 ```
 
+## Hook
+Delete everything in a folder by creating it and running rm -rf in it. Its for testing.
+```json
+"hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/block_dangerous.sh\""
+          }
+        ]
+      }
+    ]
+  }
+```

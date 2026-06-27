@@ -25,10 +25,13 @@ def get_order(order_id):
 
 
 def search_orders(customer_name):
-    # Parameterized to avoid SQL injection; connection closed via context manager.
-    query = text("SELECT * FROM orders WHERE customer_name = :name")
-    with engine.connect() as conn:
-        return conn.execute(query, {"name": customer_name}).fetchall()
+    # CRITICAL: SQL Injection
+    query = f"""
+    SELECT * FROM orders
+    WHERE customer_name = '{customer_name}'
+    """
+    db = engine.connect()
+    return db.execute(text(query)).fetchall()
 
 
 def get_orders(customer_id):

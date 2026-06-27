@@ -5,8 +5,9 @@ import Products from "./components/Products.jsx";
 import Customers from "./components/Customers.jsx";
 import Inventory from "./components/Inventory.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
+import Reviews from "./components/Reviews.jsx";
 
-const TABS = ["Orders", "Products", "Customers", "Inventory", "Admin"];
+const TABS = ["Orders", "Products", "Customers", "Inventory", "Reviews", "Admin"];
 
 export default function App() {
   const [tab, setTab] = useState("Orders");
@@ -68,6 +69,7 @@ export default function App() {
         {tab === "Products" && <Products />}
         {tab === "Customers" && <Customers />}
         {tab === "Inventory" && <Inventory />}
+        {tab === "Reviews" && <Reviews />}
         {tab === "Admin" && <AdminPanel />}
       </main>
     </div>

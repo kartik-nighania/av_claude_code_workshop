@@ -44,4 +44,6 @@ export const api = {
   customers: () => request("/customers"),
   inventory: () => request("/inventory"),
   adminUsers: () => request("/admin/users"),
+  summariseReview: (review) =>
+    request("/reviews/summary", { method: "POST", body: JSON.stringify({ review }) }),
 };

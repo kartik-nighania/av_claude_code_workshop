@@ -34,6 +34,7 @@ def create_app():
     from routes.inventory import inventory_bp
     from routes.auth import auth_bp
     from routes.admin import admin_bp
+    from routes.reviews import reviews_bp
 
     app.register_blueprint(orders_bp)
     app.register_blueprint(products_bp)
@@ -41,6 +42,7 @@ def create_app():
     app.register_blueprint(inventory_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(reviews_bp)
 
     @app.route("/api/health")
     def health():
