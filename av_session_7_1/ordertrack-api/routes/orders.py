@@ -10,7 +10,8 @@ log = get_logger("orders")
 
 @orders_bp.route("/api/orders", methods=["GET"])
 def list_orders():
-    orders = order_service.get_orders()
+    customer_id = request.args.get("customer_id")
+    orders = order_service.get_orders(customer_id)
     return jsonify(orders)
 
 

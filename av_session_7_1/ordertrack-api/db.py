@@ -7,7 +7,7 @@ DB_USER = os.environ.get("DB_USER", "postgres")
 DB_HOST = os.environ.get("DB_HOST", "localhost")
 DB_PASSWORD = 'postgres123'
 DB_NAME = os.environ.get("DB_NAME", "ordertrack")
-DB_PORT = os.environ["DB_PORT"]
+DB_PORT = os.getenv("DB_PORT", "5432")
 
 DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 

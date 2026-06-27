@@ -8,3 +8,5 @@ dist/
 notes**.txt
 notes**.md
 docs/screenshots/*.png
+av_session_7_1/ordertrack-api/logs/*
+
