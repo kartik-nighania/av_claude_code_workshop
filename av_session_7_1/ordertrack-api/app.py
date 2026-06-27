@@ -7,7 +7,8 @@ Endpoints: Orders, Products, Customers, Inventory (+ Auth, Admin).
 import os
 
 import redis
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from werkzeug.exceptions import HTTPException
 
 import config
 from utils.logger import get_logger
@@ -44,6 +45,16 @@ def create_app():
     @app.route("/api/health")
     def health():
         return jsonify({"status": "ok", "service": "ordertrack-api"})
+
+    @app.errorhandler(Exception)
+    def handle_uncaught(err):
+        # Let normal HTTP errors (404, 405, ...) through unchanged.
+        if isinstance(err, HTTPException):
+            return err
+        # Anything else is an unexpected 500 — record the full traceback so it
+        # shows up in logs/app.log, then return a clean JSON error.
+        log.exception("Unhandled error on %s %s", request.method, request.path)
+        return jsonify({"error": "internal server error"}), 500
 
     log.info("OrderTrack API initialised (DEBUG=%s)", app.config.get("DEBUG"))
     return app

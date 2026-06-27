@@ -1,205 +1,6 @@
-2026-06-27 09:12:05 [INFO] app: OrderTrack API initialised (DEBUG=True)
-2026-06-27 09:12:07 [WARNING] app: DEBUG is enabled in a production environment (FLASK_ENV=production)
-2026-06-27 09:12:09 [INFO] app: Connected to Redis at redis:6379
-2026-06-27 09:12:11 [INFO] app: Registered blueprints: orders, products, customers, inventory, auth, admin
-2026-06-27 09:12:13 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:12:15 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:12:17 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:12:19 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:12:21 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:12:23 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:12:25 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:12:27 [ERROR] order_service: connection not closed after failure; active connections=93 nearing max_connections
-2026-06-27 09:12:29 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:12:31 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:12:33 [INFO] auth_service: Login attempt user=admin password=admin123
-2026-06-27 09:12:35 [WARNING] auth_service: password written to logs in plaintext (A09 logging failure)
-2026-06-27 09:12:37 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:12:39 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:12:41 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:12:43 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:12:45 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:12:47 [ERROR] order_service: connection not closed after failure; active connections=96 nearing max_connections
-2026-06-27 09:12:49 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:12:51 [INFO] werkzeug: 127.0.0.1 - "POST /api/orders HTTP/1.1" 500
-2026-06-27 09:12:53 [ERROR] orders: KeyError: 'quantity' while handling POST /api/orders body from Carol White
-2026-06-27 09:12:55 [ERROR] orders: Traceback (most recent call last): File "routes/orders.py", line 43, in create_order quantity = data['quantity']
-2026-06-27 09:12:57 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:12:59 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:13:01 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:13:03 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:13:05 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:13:07 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:13:09 [ERROR] order_service: connection not closed after failure; active connections=99 nearing max_connections
-2026-06-27 09:13:11 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:13:13 [INFO] auth_service: Login attempt user=admin password=admin123
-2026-06-27 09:13:15 [WARNING] auth_service: password written to logs in plaintext (A09 logging failure)
-2026-06-27 09:13:17 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:13:19 [WARNING] db: environment variable DB_PORT not found in process environment
-2026-06-27 09:13:21 [ERROR] db: KeyError: 'DB_PORT' raised at import time in db.py:13 (no validation/default for required env var)
-2026-06-27 09:13:23 [ERROR] app: worker failed to boot: required configuration missing (DB_PORT)
-2026-06-27 09:13:25 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:13:27 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:13:29 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:13:31 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:13:33 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:13:35 [ERROR] order_service: connection not closed after failure; active connections=92 nearing max_connections
-2026-06-27 09:13:37 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:13:39 [WARNING] order_service: slow query: SELECT * FROM orders took 2143ms
-2026-06-27 09:13:41 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:13:43 [INFO] werkzeug: 127.0.0.1 - "POST /api/orders HTTP/1.1" 500
-2026-06-27 09:13:45 [ERROR] orders: KeyError: 'quantity' while handling POST /api/orders body from Erin Park
-2026-06-27 09:13:47 [ERROR] orders: Traceback (most recent call last): File "routes/orders.py", line 43, in create_order quantity = data['quantity']
-2026-06-27 09:13:49 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:13:51 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:13:53 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:13:55 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:13:57 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:13:59 [ERROR] order_service: connection not closed after failure; active connections=95 nearing max_connections
-2026-06-27 09:14:01 [INFO] auth_service: Login attempt user=admin password=admin123
-2026-06-27 09:14:03 [WARNING] auth_service: password written to logs in plaintext (A09 logging failure)
-2026-06-27 09:14:05 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:14:07 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:14:09 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:14:11 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:14:13 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:14:15 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:14:17 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:14:19 [ERROR] order_service: connection not closed after failure; active connections=98 nearing max_connections
-2026-06-27 09:14:21 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:14:23 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:14:25 [INFO] auth_service: Login attempt user=admin password=admin123
-2026-06-27 09:14:27 [WARNING] auth_service: password written to logs in plaintext (A09 logging failure)
-2026-06-27 09:14:29 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:14:31 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:14:33 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:14:35 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:14:37 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:14:39 [ERROR] order_service: connection not closed after failure; active connections=91 nearing max_connections
-2026-06-27 09:14:41 [INFO] werkzeug: 127.0.0.1 - "POST /api/orders HTTP/1.1" 500
-2026-06-27 09:14:43 [ERROR] orders: KeyError: 'quantity' while handling POST /api/orders body from Bob Smith
-2026-06-27 09:14:45 [ERROR] orders: Traceback (most recent call last): File "routes/orders.py", line 43, in create_order quantity = data['quantity']
-2026-06-27 09:14:47 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:14:49 [WARNING] db: environment variable DB_PORT not found in process environment
-2026-06-27 09:14:51 [ERROR] db: KeyError: 'DB_PORT' raised at import time in db.py:13 (no validation/default for required env var)
-2026-06-27 09:14:53 [ERROR] app: worker failed to boot: required configuration missing (DB_PORT)
-2026-06-27 09:14:55 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:14:57 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:14:59 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:15:01 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:15:03 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:15:05 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:15:07 [ERROR] order_service: connection not closed after failure; active connections=94 nearing max_connections
-2026-06-27 09:15:09 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:15:11 [INFO] auth_service: Login attempt user=admin password=admin123
-2026-06-27 09:15:13 [WARNING] auth_service: password written to logs in plaintext (A09 logging failure)
-2026-06-27 09:15:15 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:15:17 [WARNING] order_service: slow query: SELECT * FROM orders took 2143ms
-2026-06-27 09:15:19 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:15:21 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:15:23 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:15:25 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:15:27 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:15:29 [ERROR] order_service: connection not closed after failure; active connections=97 nearing max_connections
-2026-06-27 09:15:31 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:15:33 [INFO] werkzeug: 127.0.0.1 - "POST /api/orders HTTP/1.1" 500
-2026-06-27 09:15:35 [ERROR] orders: KeyError: 'quantity' while handling POST /api/orders body from Dave Lee
-2026-06-27 09:15:37 [ERROR] orders: Traceback (most recent call last): File "routes/orders.py", line 43, in create_order quantity = data['quantity']
-2026-06-27 09:15:39 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:15:41 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:15:43 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:15:45 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:15:47 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:15:49 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:15:51 [ERROR] order_service: connection not closed after failure; active connections=90 nearing max_connections
-2026-06-27 09:15:53 [INFO] auth_service: Login attempt user=admin password=admin123
-2026-06-27 09:15:55 [WARNING] auth_service: password written to logs in plaintext (A09 logging failure)
-2026-06-27 09:15:57 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:15:59 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:16:01 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:16:03 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:16:05 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:16:07 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:16:09 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:16:11 [ERROR] order_service: connection not closed after failure; active connections=93 nearing max_connections
-2026-06-27 09:16:13 [WARNING] db: environment variable DB_PORT not found in process environment
-2026-06-27 09:16:15 [ERROR] db: KeyError: 'DB_PORT' raised at import time in db.py:13 (no validation/default for required env var)
-2026-06-27 09:16:17 [ERROR] app: worker failed to boot: required configuration missing (DB_PORT)
-2026-06-27 09:16:19 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:16:21 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:16:23 [INFO] auth_service: Login attempt user=admin password=admin123
-2026-06-27 09:16:25 [WARNING] auth_service: password written to logs in plaintext (A09 logging failure)
-2026-06-27 09:16:27 [INFO] werkzeug: 127.0.0.1 - "POST /api/orders HTTP/1.1" 500
-2026-06-27 09:16:29 [ERROR] orders: KeyError: 'quantity' while handling POST /api/orders body from Alice Johnson
-2026-06-27 09:16:31 [ERROR] orders: Traceback (most recent call last): File "routes/orders.py", line 43, in create_order quantity = data['quantity']
-2026-06-27 09:16:33 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:16:35 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:16:37 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:16:39 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:16:41 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:16:43 [ERROR] order_service: connection not closed after failure; active connections=96 nearing max_connections
-2026-06-27 09:16:45 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:16:47 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:16:49 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:16:51 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:16:53 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:16:55 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:16:57 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:16:59 [ERROR] order_service: connection not closed after failure; active connections=99 nearing max_connections
-2026-06-27 09:17:01 [WARNING] order_service: slow query: SELECT * FROM orders took 2143ms
-2026-06-27 09:17:03 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:17:05 [INFO] auth_service: Login attempt user=admin password=admin123
-2026-06-27 09:17:07 [WARNING] auth_service: password written to logs in plaintext (A09 logging failure)
-2026-06-27 09:17:09 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:17:11 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:17:13 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:17:15 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:17:17 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:17:19 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:17:21 [ERROR] order_service: connection not closed after failure; active connections=92 nearing max_connections
-2026-06-27 09:17:23 [INFO] werkzeug: 127.0.0.1 - "POST /api/orders HTTP/1.1" 500
-2026-06-27 09:17:25 [ERROR] orders: KeyError: 'quantity' while handling POST /api/orders body from Carol White
-2026-06-27 09:17:27 [ERROR] orders: Traceback (most recent call last): File "routes/orders.py", line 43, in create_order quantity = data['quantity']
-2026-06-27 09:17:29 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:17:31 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:17:33 [WARNING] db: environment variable DB_PORT not found in process environment
-2026-06-27 09:17:35 [ERROR] db: KeyError: 'DB_PORT' raised at import time in db.py:13 (no validation/default for required env var)
-2026-06-27 09:17:37 [ERROR] app: worker failed to boot: required configuration missing (DB_PORT)
-2026-06-27 09:17:39 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:17:41 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:17:43 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:17:45 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:17:47 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:17:49 [ERROR] order_service: connection not closed after failure; active connections=95 nearing max_connections
-2026-06-27 09:17:51 [INFO] auth_service: Login attempt user=admin password=admin123
-2026-06-27 09:17:53 [WARNING] auth_service: password written to logs in plaintext (A09 logging failure)
-2026-06-27 09:17:55 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:17:57 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:17:59 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:18:01 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:18:03 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:18:05 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:18:07 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:18:09 [ERROR] order_service: connection not closed after failure; active connections=98 nearing max_connections
-2026-06-27 09:18:11 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:18:13 [INFO] werkzeug: 127.0.0.1 - "POST /api/orders HTTP/1.1" 500
-2026-06-27 09:18:15 [ERROR] orders: KeyError: 'quantity' while handling POST /api/orders body from Erin Park
-2026-06-27 09:18:17 [ERROR] orders: Traceback (most recent call last): File "routes/orders.py", line 43, in create_order quantity = data['quantity']
-2026-06-27 09:18:19 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 09:18:21 [INFO] auth_service: Login attempt user=admin password=admin123
-2026-06-27 09:18:23 [WARNING] auth_service: password written to logs in plaintext (A09 logging failure)
-2026-06-27 09:18:25 [INFO] werkzeug: 127.0.0.1 - "GET /api/health HTTP/1.1" 200
-2026-06-27 09:18:27 [INFO] werkzeug: 127.0.0.1 - "GET /api/orders HTTP/1.1" 500
-2026-06-27 09:18:29 [WARNING] order_service: no connection pool configured; opening a new DB connection per request
-2026-06-27 09:18:31 [WARNING] order_service: DB connection attempt exceeded 5000ms (no connect_timeout set)
-2026-06-27 09:18:33 [ERROR] order_service: sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server on port 5432: Connection timed out
-2026-06-27 09:18:35 [ERROR] order_service: connection not closed after failure; active connections=91 nearing max_connections
-2026-06-27 09:18:37 [INFO] werkzeug: 127.0.0.1 - "GET /api/products HTTP/1.1" 200
-2026-06-27 09:18:39 [WARNING] order_service: slow query: SELECT * FROM orders took 2143ms
-2026-06-27 09:18:41 [INFO] werkzeug: 127.0.0.1 - "GET /api/customers HTTP/1.1" 200
-2026-06-27 09:18:43 [INFO] werkzeug: 127.0.0.1 - "GET /api/inventory HTTP/1.1" 200
-2026-06-27 16:57:59 [INFO] app: OrderTrack API initialised (DEBUG=True)
-2026-06-27 16:57:59 [ERROR] app: Exception on /api/orders [GET]
+2026-06-27 18:14:43 [INFO] app: OrderTrack API initialised (DEBUG=True)
+2026-06-27 18:14:43 [INFO] app: OrderTrack API initialised (DEBUG=True)
+2026-06-27 18:14:43 [ERROR] app: Unhandled error on GET /api/orders
 Traceback (most recent call last):
   File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
     self._dbapi_connection = engine.raw_connection()
@@ -253,27 +54,18 @@ connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection re
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/flask/app.py", line 880, in full_dispatch_request
     rv = self.dispatch_request()
          ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/flask/app.py", line 865, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/routes/orders.py", line 13, in list_orders
-    orders = order_service.get_orders()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/services/order_service.py", line 52, in get_orders
-    conn = _connect()
-           ^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/services/order_service.py", line 47, in _connect
-    return engine.connect()
-           ^^^^^^^^^^^^^^^^
+  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/routes/orders.py", line 14, in list_orders
+    orders = order_service.get_orders(customer_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/services/order_service.py", line 41, in get_orders
+    with engine.connect() as conn:
+         ^^^^^^^^^^^^^^^^
   File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3276, in connect
     return self._connection_cls(self)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -330,134 +122,15 @@ connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection re
 	Is the server running on that host and accepting TCP/IP connections?
 
 (Background on this error at: https://sqlalche.me/e/20/e3q8)
-2026-06-27 16:57:59 [ERROR] app: Exception on /api/orders [GET]
+2026-06-27 18:14:43 [ERROR] app: Unhandled error on POST /api/orders
 Traceback (most recent call last):
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
-    self._dbapi_connection = engine.raw_connection()
-                             ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3300, in raw_connection
-    return self.pool.connect()
-           ^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 449, in connect
-    return _ConnectionFairy._checkout(self)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 1263, in _checkout
-    fairy = _ConnectionRecord.checkout(pool)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
-    rec = pool._do_get()
-          ^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get
-    with util.safe_reraise():
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
-    raise exc_value.with_traceback(exc_tb)
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
-    return self._create_connection()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
-    return _ConnectionRecord(self)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
-    self.__connect()
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
-    with util.safe_reraise():
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
-    raise exc_value.with_traceback(exc_tb)
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
-    self.dbapi_connection = connection = pool._invoke_creator(self)
-                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py", line 643, in connect
-    return dialect.connect(*cargs, **cparams)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 620, in connect
-    return self.loaded_dbapi.connect(*cargs, **cparams)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/psycopg2/__init__.py", line 122, in connect
-    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused
-	Is the server running on that host and accepting TCP/IP connections?
-connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
-	Is the server running on that host and accepting TCP/IP connections?
-
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/flask/app.py", line 880, in full_dispatch_request
     rv = self.dispatch_request()
          ^^^^^^^^^^^^^^^^^^^^^^^
   File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/flask/app.py", line 865, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/routes/orders.py", line 13, in list_orders
-    orders = order_service.get_orders()
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/services/order_service.py", line 52, in get_orders
-    conn = _connect()
-           ^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/services/order_service.py", line 47, in _connect
-    return engine.connect()
-           ^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3276, in connect
-    return self._connection_cls(self)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 148, in __init__
-    Connection._handle_dbapi_exception_noconnection(
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2440, in _handle_dbapi_exception_noconnection
-    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
-    self._dbapi_connection = engine.raw_connection()
-                             ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 3300, in raw_connection
-    return self.pool.connect()
-           ^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 449, in connect
-    return _ConnectionFairy._checkout(self)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 1263, in _checkout
-    fairy = _ConnectionRecord.checkout(pool)
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
-    rec = pool._do_get()
-          ^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get
-    with util.safe_reraise():
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
-    raise exc_value.with_traceback(exc_tb)
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
-    return self._create_connection()
-           ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
-    return _ConnectionRecord(self)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
-    self.__connect()
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
-    with util.safe_reraise():
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
-    raise exc_value.with_traceback(exc_tb)
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
-    self.dbapi_connection = connection = pool._invoke_creator(self)
-                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py", line 643, in connect
-    return dialect.connect(*cargs, **cparams)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 620, in connect
-    return self.loaded_dbapi.connect(*cargs, **cparams)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/.venv/lib/python3.12/site-packages/psycopg2/__init__.py", line 122, in connect
-    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused
-	Is the server running on that host and accepting TCP/IP connections?
-connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
-	Is the server running on that host and accepting TCP/IP connections?
-
-(Background on this error at: https://sqlalche.me/e/20/e3q8)
+  File "/Users/kartik/Documents/analytics_vidhya/av_session_7_1/ordertrack-api/routes/orders.py", line 37, in create_order
+    product_id = data["product_id"]
+                 ~~~~^^^^^^^^^^^^^^
+KeyError: 'product_id'

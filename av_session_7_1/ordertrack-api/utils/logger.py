@@ -1,7 +1,9 @@
 """Tiny logging helper used across the OrderTrack API.
 
-Writes to both stdout and backend/logs/app.log so failures can be inspected
-after the fact.
+Configures the ROOT logger with a file + stream handler. Attaching to the root
+(rather than to each named logger) means every logger in the process — our own
+modules *and* Flask / werkzeug / SQLAlchemy — propagates here, so uncaught
+exceptions and 500s land in ``logs/app.log`` too, not just our explicit calls.
 """
 import logging
 import os
@@ -16,17 +18,35 @@ _formatter = logging.Formatter(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
-_file_handler = logging.FileHandler(LOG_FILE)
-_file_handler.setFormatter(_formatter)
 
-_stream_handler = logging.StreamHandler()
-_stream_handler.setFormatter(_formatter)
+def _configure_root():
+    """Attach our handlers to the root logger once (idempotent under reloads)."""
+    root = logging.getLogger()
+    root.setLevel(logging.INFO)
+
+    have_file = any(
+        isinstance(h, logging.FileHandler)
+        and getattr(h, "baseFilename", None) == LOG_FILE
+        for h in root.handlers
+    )
+    if not have_file:
+        file_handler = logging.FileHandler(LOG_FILE)
+        file_handler.setFormatter(_formatter)
+        root.addHandler(file_handler)
+
+    have_stream = any(
+        isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
+        for h in root.handlers
+    )
+    if not have_stream:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(_formatter)
+        root.addHandler(stream_handler)
+
+
+_configure_root()
 
 
 def get_logger(name="ordertrack"):
-    logger = logging.getLogger(name)
-    if not logger.handlers:
-        logger.setLevel(logging.INFO)
-        logger.addHandler(_file_handler)
-        logger.addHandler(_stream_handler)
-    return logger
+    """Return a named logger that propagates to the configured root handlers."""
+    return logging.getLogger(name)

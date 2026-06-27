@@ -40,6 +40,9 @@ services:
       REDIS_PORT: "6379"
     ports:
       - "8000:8000"
+    volumes:
+      # Surface the in-container log file on the host so logs/app.log is visible.
+      - ./ordertrack-api/logs:/app/logs
     depends_on:
       db:
         condition: service_healthy
