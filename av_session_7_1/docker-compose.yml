@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: ordertrack
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ordertrack"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: ./ordertrack-api
+    # Wait-for-db is handled by depends_on health; seed then run the API.
+    command: sh -c "python seed.py && python app.py"
+    environment:
+      FLASK_ENV: production
+      SECRET_KEY: dev-secret-hardcoded
+      API_KEY: sk-test-abc123xyz
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: ordertrack
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    command: sh -c "npm install && npm run dev -- --host"
+    ports:
+      - "5174:5173"
+    environment:
+      VITE_PROXY_TARGET: http://backend:8000
+    depends_on:
+      - backend

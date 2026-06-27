@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node / Vite
+node_modules/
+dist/
+.vite/
+
+# Secrets — DO NOT COMMIT (note: .env was already leaked into history)
+.env
+
+# Local notes / editor
+notes*.txt
+.claude/
+.DS_Store
