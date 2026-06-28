@@ -1,8 +1,8 @@
 name: 1 Hello World
 on:
-  pull_request:
-    branches: [main]
-    paths: ["backend/**", "frontend/**"]
+  # pull_request:
+  #   branches: [main]
+  #   paths: ["backend/**", "frontend/**"]
   workflow_dispatch:
     inputs:
       deploy_to:

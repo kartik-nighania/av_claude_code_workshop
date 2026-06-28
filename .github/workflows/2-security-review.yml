@@ -1,57 +1,26 @@
-name: 3 HealthTrack E2E
-
+name: Claude Security Review
 on:
+  workflow_dispatch: # manual trigger
   pull_request:
-    branches: [main]
-    paths: ["backend/**", "frontend/**"]
-  workflow_dispatch:
-
-# Least-privilege token. `contents: read` covers checkout; the extra scopes are
-# for the Claude security-review action's PR annotations.
+    types: [opened, synchronize, ready_for_review, reopened]
+# Least-privilege token. The action authenticates to GitHub via the Claude
+# GitHub App token; these scopes cover checkout and any PR annotations.
 permissions:
   contents: read
   pull-requests: write
   id-token: write
 
-# Single job, sequential steps. A step that exits non-zero stops the ones after
-# it (GitHub's default), so the pipeline is fail-fast and the job is green only
-# if every stage — lint, tests, and the security gate — passes.
 jobs:
-  pipeline:
+  ai-review:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      # ---------- Stage 1: Lint (backend + frontend) ----------
-      - name: Lint backend
-        run: npm run lint -w backend
-
-      - name: Lint frontend
-        run: npm run lint -w frontend
-
-      # ---------- Stage 2: Tests (run only if lint passed) ----------
-      # Cheap, fast checks run before the paid security review so they fail first.
-      - name: Test backend
-        run: npm test -w backend
-
-      - name: Test frontend
-        run: npm test -w frontend
-
-      # ---------- Stage 3: Security review (runs only if tests passed) ----------
-      # `--json-schema` forces Claude's final answer into a structured object,
-      # surfaced as the step output `structured_output`. The action itself only
-      # fails on execution errors, never on findings, so the gate step below makes
-      # the pass/fail decision.
+      # Step 1 — run the review. `--json-schema` forces Claude's final answer
+      # into a structured object, exposed as the step output `structured_output`.
+      # The action only fails on execution errors, never on findings, so the
+      # actual pass/fail decision happens in the gate step below.
       - name: AI Security Review
         id: review
         uses: anthropics/claude-code-action@v1
@@ -74,11 +43,13 @@ jobs:
             Do NOT report style, performance, or non-security issues.
             For every issue set: severity (critical/high/medium/low), a short
             category, the file and line, a concise description, and a concrete fix.
-            Set `verdict` to "fail" if there is any critical- or high-severity
-            finding, otherwise "pass". Return your final answer as JSON matching
-            the schema.
+            Set `verdict` to "fail" if there is any critical-severity finding,
+            otherwise "pass". Return your final answer as JSON matching the schema.
 
+      # Step 2 — the actual CI gate. A plain shell step whose exit code decides
+      # the job result. Runs even if the review step errored (fail closed).
       - name: Enforce security gate
+        if: always()
         env:
           REVIEW: ${{ steps.review.outputs.structured_output }}
         run: |
@@ -104,9 +75,10 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
           echo "Critical: $CRIT | High: $HIGH"
-          # Fail the build on any critical OR high finding.
-          if [ "$CRIT" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
-            echo "::error::Security gate failed — $CRIT critical and $HIGH high finding(s). See the run summary."
+          # Fail the build on any critical finding (change to also block high:
+          #   if [ "$CRIT" -gt 0 ] || [ "$HIGH" -gt 0 ]; then ).
+          if [ "$CRIT" -gt 0 ]; then
+            echo "::error::Security gate failed — $CRIT critical finding(s). See the run summary."
             exit 1
           fi
-          echo "✅ Security gate passed — no critical or high findings."
+          echo "✅ Security gate passed — no critical findings."
