@@ -1,6 +1,8 @@
 """CRUD endpoints for /api/products."""
+
 from flask import Blueprint, jsonify, request
 
+from ..auth import require_auth
 from ..extensions import db
 from ..models import Product
 
@@ -8,18 +10,21 @@ products_bp = Blueprint("products", __name__, url_prefix="/api/products")
 
 
 @products_bp.get("")
+@require_auth
 def list_products():
     products = Product.query.order_by(Product.id).all()
     return jsonify([p.to_dict() for p in products])
 
 
 @products_bp.get("/<int:product_id>")
+@require_auth
 def get_product(product_id):
     product = Product.query.get_or_404(product_id)
     return jsonify(product.to_dict())
 
 
 @products_bp.post("")
+@require_auth
 def create_product():
     data = request.get_json(silent=True) or {}
     if not data.get("name") or not data.get("sku"):
@@ -37,6 +42,7 @@ def create_product():
 
 
 @products_bp.put("/<int:product_id>")
+@require_auth
 def update_product(product_id):
     product = Product.query.get_or_404(product_id)
     data = request.get_json(silent=True) or {}
@@ -49,6 +55,7 @@ def update_product(product_id):
 
 
 @products_bp.delete("/<int:product_id>")
+@require_auth
 def delete_product(product_id):
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)

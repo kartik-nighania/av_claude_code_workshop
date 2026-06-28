@@ -1,9 +1,124 @@
 import { useEffect, useState } from "react";
-import { api } from "./api.js";
+import { api, getToken, setToken } from "./api.js";
 
 const STATUSES = ["pending", "paid", "shipped", "delivered", "cancelled"];
+const USER_KEY = "ordertrack_user";
+
+function loadUser() {
+  try {
+    return JSON.parse(localStorage.getItem(USER_KEY)) || null;
+  } catch {
+    return null;
+  }
+}
 
 export default function App() {
+  const [user, setUser] = useState(() => (getToken() ? loadUser() : null));
+
+  function onAuthed({ token, user: u }) {
+    setToken(token);
+    localStorage.setItem(USER_KEY, JSON.stringify(u));
+    setUser(u);
+  }
+
+  function logout() {
+    setToken(null);
+    localStorage.removeItem(USER_KEY);
+    setUser(null);
+  }
+
+  if (!user) return <Auth onAuthed={onAuthed} />;
+  return <Dashboard user={user} onLogout={logout} />;
+}
+
+function Auth({ onAuthed }) {
+  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      const result =
+        mode === "register"
+          ? await api.register({ name, email, password })
+          : await api.login({ email, password });
+      onAuthed(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="auth">
+      <div className="auth-card">
+        <h1>OrderTrack</h1>
+        <div className="auth-toggle">
+          <button
+            className={mode === "login" ? "active" : ""}
+            onClick={() => setMode("login")}
+            type="button"
+          >
+            Log in
+          </button>
+          <button
+            className={mode === "register" ? "active" : ""}
+            onClick={() => setMode("register")}
+            type="button"
+          >
+            Register
+          </button>
+        </div>
+
+        {error && <div className="error">{error}</div>}
+
+        <form onSubmit={submit}>
+          {mode === "register" && (
+            <label>
+              Name
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                required
+              />
+            </label>
+          )}
+          <label>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
+          <button type="submit" disabled={busy}>
+            {busy ? "…" : mode === "register" ? "Create account" : "Log in"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function Dashboard({ user, onLogout }) {
   const [tab, setTab] = useState("orders");
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
@@ -25,6 +140,10 @@ export default function App() {
       setHealth(h);
       setError(null);
     } catch (e) {
+      if (e.status === 401) {
+        onLogout(); // token missing/expired — back to the login screen
+        return;
+      }
       setError(e.message);
     }
   }
@@ -46,9 +165,15 @@ export default function App() {
     <div className="app">
       <header>
         <h1>OrderTrack</h1>
-        <span className={`badge ${health?.status === "ok" ? "ok" : "bad"}`}>
-          {health ? `db:${health.db} · redis:${health.redis}` : "connecting…"}
-        </span>
+        <div className="user-bar">
+          <span className="greeting">Hi, {user.name}</span>
+          <span className={`badge ${health?.status === "ok" ? "ok" : "bad"}`}>
+            {health ? `db:${health.db} · redis:${health.redis}` : "connecting…"}
+          </span>
+          <button className="logout" onClick={onLogout} type="button">
+            Log out
+          </button>
+        </div>
       </header>
 
       {error && <div className="error">{error}</div>}

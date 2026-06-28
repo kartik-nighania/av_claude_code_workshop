@@ -1,10 +1,34 @@
 """SQLAlchemy models for OrderTrack: Customer, Product, Order, OrderItem."""
+
 from datetime import datetime
 
 from .extensions import db
 
 # Allowed order lifecycle states.
 ORDER_STATUSES = ("pending", "paid", "shipped", "delivered", "cancelled")
+
+
+class User(db.Model):
+    """An authenticated API user. `hashed_password` is a bcrypt hash — the
+    plaintext password is never stored, returned, or logged."""
+
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    # `name` backs the UI greeting; not part of the auth contract.
+    name = db.Column(db.String(120), nullable=False, default="")
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    hashed_password = db.Column(db.String(128), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        # Deliberately excludes hashed_password.
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
 
 
 class Customer(db.Model):
@@ -49,9 +73,7 @@ class Order(db.Model):
     __tablename__ = "orders"
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(
-        db.Integer, db.ForeignKey("customers.id"), nullable=False
-    )
+    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"), nullable=False)
     status = db.Column(db.String(20), nullable=False, default="pending")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -80,9 +102,7 @@ class OrderItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
-    product_id = db.Column(
-        db.Integer, db.ForeignKey("products.id"), nullable=False
-    )
+    product_id = db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
     quantity = db.Column(db.Integer, nullable=False, default=1)
     unit_price = db.Column(db.Numeric(10, 2), nullable=False, default=0)
 

@@ -127,3 +127,91 @@ table select {
   color: #fff;
   font-weight: 600;
 }
+
+/* ---- auth (login / register) ---- */
+.auth {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 360px;
+  background: #fff;
+  padding: 28px;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+.auth-card h1 {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.auth-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.auth-toggle button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background: #e7e9ee;
+  cursor: pointer;
+}
+.auth-toggle button.active {
+  background: #3454d1;
+  color: #fff;
+}
+
+.auth-card form {
+  display: grid;
+  gap: 14px;
+}
+
+.auth-card label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.auth-card input {
+  padding: 9px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.auth-card button[type="submit"] {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #3454d1;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---- logged-in user bar ---- */
+.user-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.greeting {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.logout {
+  border: none;
+  background: #e7e9ee;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}

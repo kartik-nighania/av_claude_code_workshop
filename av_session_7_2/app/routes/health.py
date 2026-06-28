@@ -1,4 +1,5 @@
 """Health check — verifies Postgres and Redis are reachable."""
+
 from flask import Blueprint, jsonify
 from sqlalchemy import text
 
