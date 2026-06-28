@@ -8,6 +8,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": "http://localhost:8010",
+      "/auth": "http://localhost:8010",
     },
   },
 });

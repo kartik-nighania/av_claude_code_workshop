@@ -3,6 +3,7 @@
 `get_order_status` is the canonical way to read an order's current status:
 it checks Redis first and falls back to Postgres, caching the result.
 """
+
 import json
 
 from flask import current_app

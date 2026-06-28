@@ -1,9 +1,113 @@
 import { useEffect, useState } from "react";
-import { api } from "./api.js";
+import { api, getToken, setToken } from "./api.js";
 
 const STATUSES = ["pending", "paid", "shipped", "delivered", "cancelled"];
+const USER_KEY = "ordertrack_user";
+
+function loadUser() {
+  try {
+    return JSON.parse(localStorage.getItem(USER_KEY)) || null;
+  } catch {
+    return null;
+  }
+}
 
 export default function App() {
+  const [user, setUser] = useState(loadUser);
+
+  function onAuthed({ user, access_token }) {
+    setToken(access_token);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    setUser(user);
+  }
+
+  function logout() {
+    setToken(null);
+    localStorage.removeItem(USER_KEY);
+    setUser(null);
+  }
+
+  if (!getToken() || !user) {
+    return <AuthScreen onAuthed={onAuthed} />;
+  }
+  return <Dashboard user={user} onLogout={logout} />;
+}
+
+function AuthScreen({ onAuthed }) {
+  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      const fn = mode === "login" ? api.login : api.register;
+      const result = await fn(email.trim(), password);
+      onAuthed(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="auth">
+      <h1>OrderTrack</h1>
+      <div className="auth-card">
+        <div className="auth-tabs">
+          <button
+            className={mode === "login" ? "active" : ""}
+            onClick={() => setMode("login")}
+            type="button"
+          >
+            Log in
+          </button>
+          <button
+            className={mode === "register" ? "active" : ""}
+            onClick={() => setMode("register")}
+            type="button"
+          >
+            Register
+          </button>
+        </div>
+        {error && <div className="error">{error}</div>}
+        <form onSubmit={submit}>
+          <label>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="username"
+            />
+          </label>
+          <label>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
+            />
+          </label>
+          <button type="submit" disabled={busy}>
+            {busy ? "…" : mode === "login" ? "Log in" : "Create account"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function Dashboard({ user, onLogout }) {
   const [tab, setTab] = useState("orders");
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
@@ -25,6 +129,10 @@ export default function App() {
       setHealth(h);
       setError(null);
     } catch (e) {
+      if (e.status === 401) {
+        onLogout();
+        return;
+      }
       setError(e.message);
     }
   }
@@ -46,9 +154,15 @@ export default function App() {
     <div className="app">
       <header>
         <h1>OrderTrack</h1>
-        <span className={`badge ${health?.status === "ok" ? "ok" : "bad"}`}>
-          {health ? `db:${health.db} · redis:${health.redis}` : "connecting…"}
-        </span>
+        <div className="header-right">
+          <span className={`badge ${health?.status === "ok" ? "ok" : "bad"}`}>
+            {health ? `db:${health.db} · redis:${health.redis}` : "connecting…"}
+          </span>
+          <span className="user">👤 {user.email}</span>
+          <button className="logout" onClick={onLogout}>
+            Log out
+          </button>
+        </div>
       </header>
 
       {error && <div className="error">{error}</div>}

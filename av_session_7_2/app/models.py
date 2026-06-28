@@ -1,10 +1,25 @@
 """SQLAlchemy models for OrderTrack: Customer, Product, Order, OrderItem."""
+
 from datetime import datetime
 
 from .extensions import db
 
 # Allowed order lifecycle states.
 ORDER_STATUSES = ("pending", "paid", "shipped", "delivered", "cancelled")
+
+
+class User(db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    # bcrypt hash only — plaintext passwords are never stored or logged.
+    hashed_password = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        # Intentionally omits hashed_password.
+        return {"id": self.id, "email": self.email}
 
 
 class Customer(db.Model):
@@ -49,9 +64,7 @@ class Order(db.Model):
     __tablename__ = "orders"
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(
-        db.Integer, db.ForeignKey("customers.id"), nullable=False
-    )
+    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"), nullable=False)
     status = db.Column(db.String(20), nullable=False, default="pending")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -80,9 +93,7 @@ class OrderItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
-    product_id = db.Column(
-        db.Integer, db.ForeignKey("products.id"), nullable=False
-    )
+    product_id = db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
     quantity = db.Column(db.Integer, nullable=False, default=1)
     unit_price = db.Column(db.Numeric(10, 2), nullable=False, default=0)
 

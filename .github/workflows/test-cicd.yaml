@@ -1,0 +1,124 @@
+name: OrderTrack CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+
+# All jobs operate on the OrderTrack app, which lives in av_session_7_2/.
+defaults:
+  run:
+    working-directory: av_session_7_2
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1 — lint: style/format gate. No dependencies.
+  # ---------------------------------------------------------------------------
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: av_session_7_2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install linters
+        run: pip install flake8 black
+      - name: flake8
+        run: flake8 app/ tests/
+      - name: black --check
+        run: black --check app/ tests/
+
+  # ---------------------------------------------------------------------------
+  # Job 2 — test: pytest with a 50% coverage floor. Needs lint.
+  # ---------------------------------------------------------------------------
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    defaults:
+      run:
+        working-directory: av_session_7_2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+      - name: pytest (fail under 50% coverage)
+        run: pytest --cov=app --cov-report=term-missing --cov-fail-under=50
+
+  # ---------------------------------------------------------------------------
+  # Job 3 — security: static analysis + dependency CVE scan. Needs lint.
+  # ---------------------------------------------------------------------------
+  security:
+    runs-on: ubuntu-latest
+    needs: lint
+    defaults:
+      run:
+        working-directory: av_session_7_2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install scanners
+        run: pip install bandit safety
+      - name: bandit (static analysis)
+        run: bandit -r app/
+      - name: safety (dependency CVEs)
+        run: safety check -r requirements.txt
+
+  # ---------------------------------------------------------------------------
+  # Job 4 — ai-skills: official Claude Code security audit.
+  # Blocks merge if any CRITICAL finding is reported. Needs test + security.
+  # ---------------------------------------------------------------------------
+  ai-skills:
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    # Run at repo root so the audit report path is consistent with the action.
+    defaults:
+      run:
+        working-directory: .
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Claude Code security audit
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Perform a security audit of the Flask API under av_session_7_2/app/.
+            Look for OWASP-style issues: injection, broken auth/JWT handling,
+            secrets in code, unsafe deserialization, and sensitive data exposure.
+
+            Write your findings to av_session_7_2/claude-audit.json as:
+              {"findings": [{"severity": "CRITICAL|HIGH|MEDIUM|LOW", "title": "...", "file": "..."}]}
+            Use the exact uppercase severity labels. If there are no issues,
+            write {"findings": []}. Do not take any other action.
+
+      - name: Block merge on CRITICAL findings
+        run: |
+          report="av_session_7_2/claude-audit.json"
+          if [ ! -f "$report" ]; then
+            echo "::error::Security audit produced no report ($report missing)."
+            exit 1
+          fi
+          critical=$(grep -o '"severity"[[:space:]]*:[[:space:]]*"CRITICAL"' "$report" | wc -l | tr -d ' ')
+          echo "CRITICAL findings: $critical"
+          if [ "$critical" -gt 0 ]; then
+            echo "::error::Security audit found $critical CRITICAL issue(s) — blocking merge."
+            exit 1
+          fi
+          echo "No CRITICAL findings — gate passed."
