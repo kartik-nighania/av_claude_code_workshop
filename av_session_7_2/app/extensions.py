@@ -1,4 +1,5 @@
 """Shared extension instances: SQLAlchemy (Postgres) and a Redis client."""
+
 import redis
 from flask_sqlalchemy import SQLAlchemy
 
@@ -12,9 +13,7 @@ class _RedisHolder:
 
 
 def init_redis(app):
-    _RedisHolder.client = redis.from_url(
-        app.config["REDIS_URL"], decode_responses=True
-    )
+    _RedisHolder.client = redis.from_url(app.config["REDIS_URL"], decode_responses=True)
 
 
 def get_redis():

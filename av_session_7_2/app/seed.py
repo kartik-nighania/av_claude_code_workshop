@@ -1,4 +1,5 @@
 """Seed a few rows so the app shows data on first run (idempotent)."""
+
 from .extensions import db
 from .models import Customer, Product, Order, OrderItem
 

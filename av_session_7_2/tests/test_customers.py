@@ -38,9 +38,7 @@ def test_get_customer_404(client):
 
 def test_update_customer(client, make_customer):
     created = make_customer()
-    resp = client.put(
-        f"/api/customers/{created['id']}", json={"name": "Alice Updated"}
-    )
+    resp = client.put(f"/api/customers/{created['id']}", json={"name": "Alice Updated"})
     assert resp.status_code == 200
     assert resp.get_json()["name"] == "Alice Updated"
 

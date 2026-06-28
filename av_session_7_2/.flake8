@@ -1,0 +1,5 @@
+[flake8]
+# Align flake8 with black's formatting (88-col lines, black-compatible slicing).
+max-line-length = 88
+extend-ignore = E203, W503
+exclude = .venv, frontend, __pycache__, .git

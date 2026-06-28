@@ -3,6 +3,7 @@
 The app is run against an in-memory SQLite database (no Postgres needed) and
 with Redis disabled, so `order_status` transparently degrades to DB-only reads.
 """
+
 from datetime import datetime, timedelta
 
 import jwt
@@ -51,6 +52,7 @@ def client(app):
 
 # --- auth helpers ----------------------------------------------------------
 
+
 @pytest.fixture
 def user(client):
     """Register a user and return identity + ready-to-use auth headers."""
@@ -90,6 +92,7 @@ def expired_token(app):
 
 
 # --- data helpers ----------------------------------------------------------
+
 
 @pytest.fixture
 def make_customer(client):

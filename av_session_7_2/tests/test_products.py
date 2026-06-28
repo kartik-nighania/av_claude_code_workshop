@@ -26,9 +26,7 @@ def test_create_product(client, auth_headers):
 
 
 def test_create_product_missing_fields_400(client, auth_headers):
-    resp = client.post(
-        "/api/products", json={"name": "NoSku"}, headers=auth_headers
-    )
+    resp = client.post("/api/products", json={"name": "NoSku"}, headers=auth_headers)
     assert resp.status_code == 400
 
 

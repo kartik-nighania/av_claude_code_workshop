@@ -5,6 +5,7 @@ Security notes:
 - Passwords are hashed with bcrypt; plaintext is never stored or logged.
 - Tokens are HS256-signed with the app SECRET_KEY and expire after 24 hours.
 """
+
 from datetime import datetime, timedelta
 from functools import wraps
 
@@ -43,9 +44,7 @@ def generate_token(user):
 
 def decode_token(token):
     """Decode/validate a JWT, returning its payload (raises on invalid/expired)."""
-    return jwt.decode(
-        token, current_app.config["SECRET_KEY"], algorithms=[_ALGORITHM]
-    )
+    return jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=[_ALGORITHM])
 
 
 def require_auth(fn):

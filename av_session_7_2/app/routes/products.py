@@ -1,4 +1,5 @@
 """CRUD endpoints for /api/products."""
+
 from flask import Blueprint, jsonify, request
 
 from ..auth import require_auth

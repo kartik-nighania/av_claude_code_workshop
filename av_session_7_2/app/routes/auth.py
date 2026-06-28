@@ -1,4 +1,5 @@
 """Auth endpoints: register + login, issuing 24h JWT access tokens."""
+
 from flask import Blueprint, jsonify, request
 
 from ..auth import generate_token, hash_password, verify_password
