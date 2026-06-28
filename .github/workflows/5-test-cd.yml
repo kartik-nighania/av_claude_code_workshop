@@ -1,9 +1,5 @@
-name: CD — Build, Push to ECR, Deploy to EC2
 on:
   workflow_dispatch:
-  pull_request:
-    branches: [main]
-    paths: ["av_session_7_2/**"]
 
 jobs:
   noop:
