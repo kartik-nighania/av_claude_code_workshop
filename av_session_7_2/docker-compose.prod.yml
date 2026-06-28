@@ -1,0 +1,56 @@
+# OrderTrack — production stack (pulls prebuilt images from ECR).
+# Used on the EC2 host: docker compose -f docker-compose.prod.yml up -d
+services:
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  api:
+    image: 100099319985.dkr.ecr.ap-south-1.amazonaws.com/av-claude-ecr:backend-latest
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      ORDER_STATUS_CACHE_TTL: ${ORDER_STATUS_CACHE_TTL}
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    ports:
+      - "${API_PORT}:8010"
+
+  frontend:
+    image: 100099319985.dkr.ecr.ap-south-1.amazonaws.com/av-claude-ecr:frontend-latest
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT}:8080"
+
+volumes:
+  pgdata:

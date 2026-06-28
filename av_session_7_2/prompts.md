@@ -99,6 +99,7 @@ Job 1: lint
   Needs: —
 
 Job 2: test
+  add a pytest.ini that puts the project root on the path explicitly.
   Command: pytest with --cov-fail-under=50
   Needs: lint
 
@@ -107,7 +108,7 @@ Job 3: security
   Needs: lint
 
 Job 4: ai-skills
-  Command: Run official Claude code security-audit GH action, block merge on CRITICAL found
+  Command: Run official Claude code security-audit GH action, block merge on CRITICAL found.
   Needs: test, security
 
 Github secret already present for Claude code: CLAUDE_CODE_OAUTH_TOKEN
@@ -124,6 +125,7 @@ Do this task fast
 Task:
 - Generate a production Dockerfile (multi-stage, non-root, health check at /health) and docker-compose.yml for OrderTrack API with 4 services: api, frontend, db (postgres:15-alpine), cache (redis:7-alpine)
 - Also generate .env.example with all required vars and also the actual .env file with all the real values.
+Add the .env file in .gitignore as well.
 Save all 3 files to this folder here av_session_7_2
 ```
 
@@ -139,7 +141,9 @@ Push all my work to GitHub and create a PR.
 
 Branch: feature/capstone-complete
 Target: main
+Pre tasks: Run and fix if needed the lint, test and security jobs of test-cicd.yaml. Use existing or create a .venv folder
 
+Finally stash all the commits in PR into a single commit to avoid polluted git history in merge.
 PR title: "feat: capstone — auth, tests, CI, Docker, CD"
 
 PR body must include:-
@@ -148,4 +152,37 @@ PR body must include:-
 - Test coverage result
 - Security audit result
 - Any breaking changes
+```
+
+
+## CD deployment
+MEDIUM EFFORT
+
+```
+first create a docker-compose.prod.yaml
+where the the:
+ECR is: 100099319985.dkr.ecr.ap-south-1.amazonaws.com/av-claude-ecr
+and frontend-latest backend-latest with pull_policy as always.
+
+For this task create a file in the github workflow folder on parent called: 5-test-cd.yml
+The GH workflow is triggered only by manual workflow dispatch.
+
+then based on this folder: av_session_7_2 the workflow steps should:
+
+login to aws and ecr
+we have the below keys already in github secrets
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_REGION
+
+then builds the docker images for frontend and backend and tag as frontend-latest backend-latest
+pushed them to ECR
+
+then login the AWS EC2 VM via SSH using the github secrets as ubuntu user
+SSH secrets are: EC2_HOST having IP address and EC2_SSH_KEY
+
+then go to folder at: /home/ubuntu/av_claude_code_workshop/av_session_7_2
+checkout the main repository
+does a git pull to get the latest code
+then restart docker with docker-compose.prod.yml and runs it in background
 ```

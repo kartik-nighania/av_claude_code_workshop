@@ -1,0 +1,67 @@
+name: OrderTrack CD
+
+# Manual deploy only.
+on:
+  workflow_dispatch:
+
+env:
+  ECR_REGISTRY: 100099319985.dkr.ecr.ap-south-1.amazonaws.com
+  ECR_REPOSITORY: av-claude-ecr
+  # The app lives in this subfolder of the repo.
+  APP_DIR: av_session_7_2
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # --- AWS + ECR auth -------------------------------------------------
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # --- Build + push images --------------------------------------------
+      - name: Build and push backend image
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:backend-latest" -f Dockerfile .
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:backend-latest"
+
+      - name: Build and push frontend image
+        working-directory: ${{ env.APP_DIR }}/frontend
+        run: |
+          docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:frontend-latest" -f Dockerfile .
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:frontend-latest"
+
+      # --- Deploy on EC2 over SSH -----------------------------------------
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_REGION,ECR_REGISTRY
+          script: |
+            set -e
+            # Authenticate the EC2 Docker daemon to ECR so it can pull the images.
+            aws ecr get-login-password --region "$AWS_REGION" \
+              | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+
+            cd /home/ubuntu/av_claude_code_workshop/av_session_7_2
+            git pull --ff-only
+
+            # Restart the stack in the background (pull_policy: always pulls latest).
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
