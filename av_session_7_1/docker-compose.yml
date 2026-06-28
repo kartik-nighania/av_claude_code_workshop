@@ -31,7 +31,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres123
       DB_HOST: db
-      DB_PORT: "5432"
+      DB_PORT: "5433"
       DB_NAME: ordertrack
       # Picked up by psycopg2 in order_service.get_orders (no user/pwd passed there).
       PGUSER: postgres

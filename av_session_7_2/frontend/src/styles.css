@@ -1,0 +1,129 @@
+:root {
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1a1a2e;
+}
+
+body {
+  margin: 0;
+  background: #f4f5f7;
+}
+
+.app {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.badge {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e0e0e0;
+}
+.badge.ok {
+  background: #d6f5dd;
+  color: #1b7a35;
+}
+.badge.bad {
+  background: #fad4d4;
+  color: #a12121;
+}
+
+.error {
+  margin: 12px 0;
+  padding: 10px 12px;
+  background: #fad4d4;
+  color: #a12121;
+  border-radius: 6px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.tabs button {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: #e7e9ee;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+.tabs button.active {
+  background: #3454d1;
+  color: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background: #fafbfc;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.muted {
+  color: #888;
+}
+
+.new-order {
+  display: grid;
+  gap: 14px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 360px;
+}
+
+.new-order label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.new-order select,
+.new-order input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.new-order button,
+table select {
+  cursor: pointer;
+}
+
+.new-order button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #3454d1;
+  color: #fff;
+  font-weight: 600;
+}

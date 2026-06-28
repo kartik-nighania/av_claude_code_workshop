@@ -11,6 +11,7 @@ from flask import Flask, jsonify, request
 from werkzeug.exceptions import HTTPException
 
 import config
+from db import ping as db_ping
 from utils.logger import get_logger
 
 log = get_logger("app")
@@ -46,7 +47,16 @@ def create_app():
 
     @app.route("/api/health")
     def health():
-        return jsonify({"status": "ok", "service": "ordertrack-api"})
+        # Readiness, not just liveness: the app is only "ok" when the database
+        # it depends on is actually reachable. A failing DB returns 503 so
+        # callers (and tests) can trust that healthy ⇒ DB is up.
+        db_ok = db_ping()
+        body = {
+            "status": "ok" if db_ok else "degraded",
+            "service": "ordertrack-api",
+            "db": "ok" if db_ok else "down",
+        }
+        return jsonify(body), (200 if db_ok else 503)
 
     @app.errorhandler(Exception)
     def handle_uncaught(err):

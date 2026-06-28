@@ -149,3 +149,53 @@ KeyError: 'product_id'
 2026-06-27 18:29:14 [INFO] werkzeug: 127.0.0.1 - - [27/Jun/2026 18:29:14] "GET /api/health HTTP/1.1" 200 -
 2026-06-27 18:29:14 [INFO] werkzeug: 127.0.0.1 - - [27/Jun/2026 18:29:14] "POST /api/reviews/summary HTTP/1.1" 200 -
 2026-06-27 18:29:47 [INFO] werkzeug: 127.0.0.1 - - [27/Jun/2026 18:29:47] "POST /api/reviews/summary HTTP/1.1" 200 -
+2026-06-27 15:29:38 [INFO] seed: Seed complete: 3 customers, 4 products
+2026-06-27 15:29:39 [INFO] app: OrderTrack API initialised (DEBUG=True)
+2026-06-27 15:29:39 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://172.22.0.4:8000
+2026-06-27 15:29:39 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-06-27 15:29:39 [INFO] werkzeug:  * Restarting with stat
+2026-06-27 15:29:39 [INFO] app: OrderTrack API initialised (DEBUG=True)
+2026-06-27 15:29:39 [WARNING] werkzeug:  * Debugger is active!
+2026-06-27 15:29:39 [INFO] werkzeug:  * Debugger PIN: 113-437-183
+2026-06-27 15:30:06 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:06] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 15:30:06 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:06] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 15:30:13 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:13] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 15:30:13 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:13] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 15:30:14 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:14] "GET /api/products HTTP/1.1" 200 -
+2026-06-27 15:30:14 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:14] "GET /api/products HTTP/1.1" 200 -
+2026-06-27 15:30:15 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:15] "GET /api/customers HTTP/1.1" 200 -
+2026-06-27 15:30:15 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:15] "GET /api/customers HTTP/1.1" 200 -
+2026-06-27 15:30:17 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:17] "GET /api/inventory HTTP/1.1" 200 -
+2026-06-27 15:30:17 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:17] "GET /api/inventory HTTP/1.1" 200 -
+2026-06-27 15:30:25 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:25] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 15:30:25 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:25] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 15:30:28 [INFO] auth_service: Login attempt user=admin password=admin123
+2026-06-27 15:30:28 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:28] "POST /api/auth/login HTTP/1.1" 200 -
+2026-06-27 15:30:36 [INFO] auth_service: Login attempt user=admin password=admin123
+2026-06-27 15:30:36 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 15:30:36] "POST /api/auth/login HTTP/1.1" 200 -
+2026-06-27 21:06:14 [INFO] app: OrderTrack API initialised (DEBUG=True)
+2026-06-27 21:06:27 [INFO] app: OrderTrack API initialised (DEBUG=True)
+2026-06-27 21:36:30 [INFO] app: OrderTrack API initialised (DEBUG=True)
+2026-06-27 16:36:14 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:14] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 16:36:14 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:14] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 16:36:14 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:14] "[31m[1mGET /api/products HTTP/1.1[0m" 401 -
+2026-06-27 16:36:14 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:14] "[31m[1mGET /api/products HTTP/1.1[0m" 401 -
+2026-06-27 16:36:15 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:15] "[31m[1mGET /api/customers HTTP/1.1[0m" 401 -
+2026-06-27 16:36:15 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:15] "[31m[1mGET /api/customers HTTP/1.1[0m" 401 -
+2026-06-27 16:36:15 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:15] "[31m[1mGET /api/inventory HTTP/1.1[0m" 401 -
+2026-06-27 16:36:15 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:15] "[31m[1mGET /api/inventory HTTP/1.1[0m" 401 -
+2026-06-27 16:36:16 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:16] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 16:36:16 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:16] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 16:36:54 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:54] "[31m[1mGET /api/products HTTP/1.1[0m" 401 -
+2026-06-27 16:36:54 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:54] "[31m[1mGET /api/products HTTP/1.1[0m" 401 -
+2026-06-27 16:36:54 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:54] "[31m[1mGET /api/customers HTTP/1.1[0m" 401 -
+2026-06-27 16:36:54 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:54] "[31m[1mGET /api/customers HTTP/1.1[0m" 401 -
+2026-06-27 16:36:55 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:55] "[31m[1mGET /api/products HTTP/1.1[0m" 401 -
+2026-06-27 16:36:55 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:55] "[31m[1mGET /api/products HTTP/1.1[0m" 401 -
+2026-06-27 16:36:57 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:57] "GET /api/orders HTTP/1.1" 200 -
+2026-06-27 16:36:57 [INFO] werkzeug: 172.22.0.5 - - [27/Jun/2026 16:36:57] "GET /api/orders HTTP/1.1" 200 -
+2026-06-28 08:22:48 [INFO] werkzeug: 172.22.0.1 - - [28/Jun/2026 08:22:48] "GET /api/health HTTP/1.1" 200 -
+2026-06-28 08:22:49 [INFO] werkzeug: 172.22.0.1 - - [28/Jun/2026 08:22:49] "GET /api/health HTTP/1.1" 200 -
