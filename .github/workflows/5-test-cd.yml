@@ -1,8 +1,76 @@
+name: Test CD
+
+# Manual trigger only.
 on:
   workflow_dispatch:
 
+env:
+  ECR_REGISTRY: 100099319985.dkr.ecr.ap-south-1.amazonaws.com
+  ECR_REPOSITORY: 100099319985.dkr.ecr.ap-south-1.amazonaws.com/av-claude-ecr
+
 jobs:
-  noop:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "stub on main — real steps live on the feature branch"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ---- AWS + ECR auth ----
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ---- Build + push images (context: av_session_7_2) ----
+      - name: Build & push backend image
+        run: |
+          docker build -t "$ECR_REPOSITORY:backend-latest" av_session_7_2
+          docker push "$ECR_REPOSITORY:backend-latest"
+
+      - name: Build & push frontend image
+        run: |
+          docker build -t "$ECR_REPOSITORY:frontend-latest" -f - av_session_7_2 <<'DOCKERFILE'
+          FROM node:20-alpine AS build
+          WORKDIR /app
+          COPY frontend/package*.json ./
+          RUN npm ci
+          COPY frontend/ ./
+          RUN npm run build
+
+          FROM nginx:alpine
+          COPY --from=build /app/dist /usr/share/nginx/html
+          RUN printf 'server {\n  listen 80;\n  location / {\n    root /usr/share/nginx/html;\n    try_files $uri /index.html;\n  }\n  location /api/ {\n    proxy_pass http://api:8010;\n  }\n}\n' > /etc/nginx/conf.d/default.conf
+          DOCKERFILE
+          docker push "$ECR_REPOSITORY:frontend-latest"
+
+      # ---- Deploy on EC2 over SSH ----
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_REGION,ECR_REGISTRY
+          script: |
+            set -e
+            # Authenticate the EC2 docker daemon to ECR so it can pull the images.
+            aws ecr get-login-password --region "$AWS_REGION" \
+              | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+
+            cd /home/ubuntu/av_claude_code_workshop/av_session_7_2
+            git checkout main
+            git pull
+
+            # pull_policy: always in the compose file refreshes the ECR images.
+            docker compose -f docker-compose.prod.yaml pull
+            docker compose -f docker-compose.prod.yaml down
+            docker compose -f docker-compose.prod.yaml up -d
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}

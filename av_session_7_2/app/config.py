@@ -3,6 +3,7 @@
 NOTE: secrets handling is intentionally minimal for this demo — values come
 from env vars with local-dev defaults. Do not ship these defaults.
 """
+
 import os
 
 

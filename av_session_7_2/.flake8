@@ -1,0 +1,6 @@
+[flake8]
+# Align with black's formatting (88 cols) and ignore the rules black conflicts
+# with (E203 whitespace before ':', W503 line break before binary operator).
+max-line-length = 88
+extend-ignore = E203, W503
+exclude = .venv,__pycache__,frontend,build,dist

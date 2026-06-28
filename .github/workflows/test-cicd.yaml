@@ -1,0 +1,139 @@
+name: Test CICD
+
+# Runs when a pull request is created against main.
+on:
+  pull_request:
+    branches: [main]
+    types: [opened]
+  workflow_dispatch: # manual trigger
+
+# Least-privilege token. contents:read covers checkout; the extra scopes let the
+# Claude security-audit action annotate the PR.
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+# The OrderTrack app lives in this subfolder; all shell steps run from there.
+defaults:
+  run:
+    working-directory: av_session_7_2
+
+jobs:
+  # ---------------- Job 1: lint ----------------
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install lint tools
+        run: pip install flake8 black
+      - name: flake8
+        run: flake8 app/ tests/
+      - name: black --check
+        run: black --check app/ tests/
+
+  # ---------------- Job 2: test ----------------
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+      - name: pytest (coverage gate 50%)
+        run: pytest --cov=app --cov-fail-under=50
+
+  # ---------------- Job 3: security ----------------
+  security:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install security tools
+        run: pip install bandit safety
+      - name: bandit
+        run: bandit -r app/
+      - name: safety
+        run: safety check -r requirements.txt
+
+  # ---------------- Job 4: ai-skills ----------------
+  # Official Claude Code security audit. The action only fails on execution
+  # errors (never on findings), so a gate step parses the structured output and
+  # blocks the merge when any CRITICAL finding is present.
+  ai-skills:
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: AI Security Audit
+        id: audit
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --max-turns 100
+            --model claude-haiku-4-5
+            --allowed-tools "Read,Grep,Glob"
+            --json-schema '{"type":"object","properties":{"verdict":{"type":"string","enum":["pass","fail"]},"summary":{"type":"string"},"findings":{"type":"array","items":{"type":"object","properties":{"severity":{"type":"string","enum":["critical","high","medium","low"]},"category":{"type":"string"},"file":{"type":"string"},"line":{"type":"integer"},"issue":{"type":"string"},"recommendation":{"type":"string"}},"required":["severity","category","file","issue","recommendation"]}}},"required":["verdict","summary","findings"]}'
+          prompt: |
+            You are a security engineer auditing the OrderTrack API under
+            `av_session_7_2/`. Review the Python backend in `av_session_7_2/app/`
+            and the React frontend in `av_session_7_2/frontend/`.
+            FOCUS ONLY ON:
+            - OWASP Top 10
+            - Injection (SQL, command, template)
+            - Broken authentication / authorization (JWT handling, password hashing)
+            - Sensitive data exposure (secrets, tokens, passwords in logs/responses)
+
+            Do NOT report style, performance, or non-security issues.
+            For every issue set: severity (critical/high/medium/low), a short
+            category, the file and line, a concise description, and a concrete fix.
+            Set `verdict` to "fail" if there is any critical-severity finding,
+            otherwise "pass". Return your final answer as JSON matching the schema.
+
+      # Gate: a plain shell step whose exit code decides the job result. Runs even
+      # if the audit step errored (fail closed) so merges are never let through
+      # on a broken run.
+      - name: Block merge on CRITICAL
+        if: always()
+        working-directory: . # gate is repo-agnostic; override the default
+        env:
+          AUDIT: ${{ steps.audit.outputs.structured_output }}
+        run: |
+          if [ -z "$AUDIT" ]; then
+            echo "::error::Security audit produced no output (the audit step likely failed)."
+            exit 1
+          fi
+
+          CRIT=$(printf '%s' "$AUDIT" | jq '[.findings[] | select(.severity=="critical")] | length')
+
+          {
+            echo "## 🔒 Claude Security Audit"
+            echo ""
+            printf '%s' "$AUDIT" | jq -r '.summary'
+            echo ""
+            echo "| Severity | Category | Location | Issue |"
+            echo "| --- | --- | --- | --- |"
+            printf '%s' "$AUDIT" | jq -r '
+              .findings[]
+              | "| \(.severity) | \(.category) | \(.file)\(if .line then ":" + (.line|tostring) else "" end) | \(.issue) |"'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "Critical findings: $CRIT"
+          if [ "$CRIT" -gt 0 ]; then
+            echo "::error::Merge blocked — $CRIT CRITICAL finding(s). See the run summary."
+            exit 1
+          fi
+          echo "✅ No critical findings — merge allowed."
