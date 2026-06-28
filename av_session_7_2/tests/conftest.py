@@ -81,7 +81,7 @@ def expired_token(app):
         now = datetime.utcnow()
         return jwt.encode(
             {
-                "sub": 1,
+                "sub": "1",
                 "email": "ghost@example.com",
                 "iat": now - timedelta(hours=25),
                 "exp": now - timedelta(hours=1),

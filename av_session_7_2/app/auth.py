@@ -34,7 +34,8 @@ def generate_token(user):
     """Issue a signed JWT carrying the user id + email, expiring in 24h."""
     now = datetime.utcnow()
     payload = {
-        "sub": user.id,
+        # `sub` must be a string per RFC 7519 (PyJWT >= 2.13 enforces this).
+        "sub": str(user.id),
         "email": user.email,
         "iat": now,
         "exp": now + TOKEN_TTL,
