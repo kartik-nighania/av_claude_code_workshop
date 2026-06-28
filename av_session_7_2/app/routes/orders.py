@@ -1,6 +1,7 @@
 """CRUD endpoints for /api/orders, plus a cached status lookup."""
 from flask import Blueprint, jsonify, request
 
+from ..auth import require_auth
 from ..extensions import db
 from ..models import ORDER_STATUSES, Order, OrderItem, Product
 from ..order_status import get_order_status, invalidate_order_status
@@ -9,18 +10,21 @@ orders_bp = Blueprint("orders", __name__, url_prefix="/api/orders")
 
 
 @orders_bp.get("")
+@require_auth
 def list_orders():
     orders = Order.query.order_by(Order.id).all()
     return jsonify([o.to_dict() for o in orders])
 
 
 @orders_bp.get("/<int:order_id>")
+@require_auth
 def get_order(order_id):
     order = Order.query.get_or_404(order_id)
     return jsonify(order.to_dict())
 
 
 @orders_bp.get("/<int:order_id>/status")
+@require_auth
 def order_status(order_id):
     status = get_order_status(order_id)
     if status is None:
@@ -29,6 +33,7 @@ def order_status(order_id):
 
 
 @orders_bp.post("")
+@require_auth
 def create_order():
     data = request.get_json(silent=True) or {}
     customer_id = data.get("customer_id")
@@ -55,6 +60,7 @@ def create_order():
 
 
 @orders_bp.put("/<int:order_id>")
+@require_auth
 def update_order(order_id):
     order = Order.query.get_or_404(order_id)
     data = request.get_json(silent=True) or {}
@@ -71,6 +77,7 @@ def update_order(order_id):
 
 
 @orders_bp.delete("/<int:order_id>")
+@require_auth
 def delete_order(order_id):
     order = Order.query.get_or_404(order_id)
     db.session.delete(order)

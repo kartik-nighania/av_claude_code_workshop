@@ -7,6 +7,20 @@ from .extensions import db
 ORDER_STATUSES = ("pending", "paid", "shipped", "delivered", "cancelled")
 
 
+class User(db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    # bcrypt hash only — plaintext passwords are never stored or logged.
+    hashed_password = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        # Intentionally omits hashed_password.
+        return {"id": self.id, "email": self.email}
+
+
 class Customer(db.Model):
     __tablename__ = "customers"
 

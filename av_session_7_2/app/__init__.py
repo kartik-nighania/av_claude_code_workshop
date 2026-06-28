@@ -20,13 +20,15 @@ def create_app(config_class=Config):
     db.init_app(app)
     init_redis(app)
 
-    # Blueprints (CRUD: /api/orders, /api/products, /api/customers + health).
+    # Blueprints (auth + CRUD: /api/orders, /api/products, /api/customers + health).
     from .routes.health import health_bp
+    from .routes.auth import auth_bp
     from .routes.customers import customers_bp
     from .routes.products import products_bp
     from .routes.orders import orders_bp
 
     app.register_blueprint(health_bp)
+    app.register_blueprint(auth_bp)
     app.register_blueprint(customers_bp)
     app.register_blueprint(products_bp)
     app.register_blueprint(orders_bp)
